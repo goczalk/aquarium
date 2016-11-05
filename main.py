@@ -1,4 +1,9 @@
+"""
+File with main function
+"""
+
 import time
+import render
 
 since_last_update = 0.0
 last_update = time.clock()
