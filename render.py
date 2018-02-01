@@ -11,7 +11,7 @@ def load_png(name):
             image = image.convert()
         else:
             image = image.convert_alpha()
-    except pygame.error, message:
-        print 'Cannot load image:', name
-        raise SystemExit, message
+    except (pygame.error, message):
+        print ('Cannot load image:', name)
+        raise (SystemExit, message)
     return image, image.get_rect()

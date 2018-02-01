@@ -36,6 +36,12 @@ File with main function
 #     #render
 #     i+=1
 
+
+#najpierw plankton i podstawa rybki
+#pływanie, jedzenie planktonu i uzupełnianie energii
+#+ odpowiednia wizualizacja
+#np. pasek energii nad rybką
+
 from objects import Fish
 import pygame
 from pygame.locals import *
@@ -45,7 +51,7 @@ def main():
 
     size = [1000, 500] #width, height
     screen = pygame.display.set_mode(size)
-    pygame.display.set_caption('Aquarium ')
+    pygame.display.set_caption('Aquarium')
 
     # Fill background
     background = pygame.Surface(screen.get_size())
@@ -72,6 +78,7 @@ def main():
                 return
 
         # screen.blit(background, ball.rect, ball.rect)
+        screen.blit(background, (0, 0))
         ball.update()
         ballsprite.draw(screen)
         pygame.display.flip()
