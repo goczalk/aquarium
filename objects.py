@@ -7,7 +7,15 @@ import math
 import pygame
 from render import load_png
 
-
+class Plancton:
+    def __init__(self):
+        self.x = random.randrange(1000)
+        self.y = random.randrange(500)
+        self.radius = 2
+        
+    def draw(self, screen):
+        pygame.draw.circle(screen, 0x0066ff, (self.x, self.y), self.radius)
+        
 class Fish(pygame.sprite.Sprite):
     """
     Randomized position and vector.

@@ -42,9 +42,11 @@ File with main function
 #+ odpowiednia wizualizacja
 #np. pasek energii nad rybką
 
-from objects import Fish
+from objects import Fish, Plancton
 import pygame
 from pygame.locals import *
+
+PLANCTON_NUM = 50
 
 def main():
     pygame.init()
@@ -63,12 +65,17 @@ def main():
     pygame.display.flip()
 
     ball = Fish()
+    
+    # lista przechowująca plankton
+    plankton_list = []
+    for _ in range(PLANCTON_NUM):
+        plankton_list.append(Plancton())
 
     ballsprite = pygame.sprite.RenderPlain(ball)
 
     # Initialise clock
     clock = pygame.time.Clock()
-
+    
     while 1:
         # Make sure game doesn't run at more than 60 frames per second
         clock.tick(60)
@@ -80,7 +87,13 @@ def main():
         # screen.blit(background, ball.rect, ball.rect)
         screen.blit(background, (0, 0))
         ball.update()
+        
+        #narysuj plankton raz i sprawdzaj czy zjedzony??
+        for plankton in plankton_list:
+            plankton.draw(screen)
+        
         ballsprite.draw(screen)
+        
         pygame.display.flip()
 
 if __name__ == '__main__': main()
