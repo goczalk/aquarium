@@ -36,17 +36,11 @@ File with main function
 #     #render
 #     i+=1
 
-
-#najpierw plankton i podstawa rybki
-#pływanie, jedzenie planktonu i uzupełnianie energii
-#+ odpowiednia wizualizacja
-#np. pasek energii nad rybką
-
 from objects import Fish, Plancton
 import pygame
 from pygame.locals import *
 
-PLANCTON_NUM = 50
+PLANCTON_NUM = 100
 
 def main():
     pygame.init()
@@ -54,7 +48,7 @@ def main():
     size = [1000, 500] #width, height
     screen = pygame.display.set_mode(size)
     pygame.display.set_caption('Aquarium')
-
+    
     # Fill background
     background = pygame.Surface(screen.get_size())
     background = background.convert()
@@ -70,7 +64,7 @@ def main():
     plankton_list = []
     for _ in range(PLANCTON_NUM):
         plankton_list.append(Plancton())
-
+    
     ballsprite = pygame.sprite.RenderPlain(ball)
 
     # Initialise clock
@@ -86,9 +80,17 @@ def main():
 
         # screen.blit(background, ball.rect, ball.rect)
         screen.blit(background, (0, 0))
-        ball.update()
         
-        #narysuj plankton raz i sprawdzaj czy zjedzony??
+        ball.update(screen)
+        
+        # which index does the ball bump into, -1 => none
+        plankton_index = ball.rect.collidelist([plankton.rect for plankton in plankton_list])
+        if plankton_index != -1:
+            # remove from list and add as much energy as big the plancton was
+            ball.increase_energy((plankton_list.pop(plankton_index)).radius)
+        
+        #TODO
+        #narysuj plankton raz i sprawdzaj czy zjedzony?? -> da się?
         for plankton in plankton_list:
             plankton.draw(screen)
         
