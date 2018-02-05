@@ -18,23 +18,44 @@ MAX_RADIUS = 4
 
 
 """ FISH """
-""" Max energy of fish """
-MAX_ENERGY = 300
 
-""" Constants describing width and height of rectangle of energy"""
-ENERGY_LABEL_HEIGHT = 5
-ENERGY_LABEL_WIDTH = 30
+""" Enegry"""
+MAX_ENERGY = 100
+MIN_ENERGY = 1
+ENERGY_FASTER_AGING = 0.2 * MAX_ENERGY
+ENERGY_SLOWER_AGING = 0.8 * MAX_ENERGY
+
+# TODO
+# MAX_ENERGY/2?
+ENERGY_CHANGE_VELOCITY = MAX_ENERGY/2
+
+# TODO
+# 'slow' speed: 1 move = 1 energy point?
+# 'fast' speed: 1 move = 2 energy point?
+ENERGY_POINT = 1
+ADDITIONAL_ENERGY_POINT = 1
+
+""" Health points """
+MAX_HP = 100
+FISH_YEAR = 100 # Number of units (frames) which has to pass to decrease hp
+SLOWER_FASTER_AGING_COUNTER = 10 # if so many times in row Energy is below/over ENERGY_FASTER_AGING/ENERGY_SLOWER_AGING
+ADDITIONAL_FISH_YEAR = 0.1 * FISH_YEAR # health is decreasing (10%) faster or slower (such num is -/+ to counter)
+                                       # it can be -/+ only 3 times in a row  as you can't inifnitly slower/faster aging
+    
+""" Constants describing width and height of rectangle of energy/hp """
+LABEL_HEIGHT = 5
+LABEL_WIDTH = 30
 
 """ Multiplier for increasing food value """
-MULTIPLIER_FOR_FOOD = 20
+MULTIPLIER_FOR_FOOD = 15
 
 
 class Plancton:
     """
-    self.xy - x, y position
-    self.rect - Rectangle object
     self.radius - radius of plancton
+    self.rect - Rectangle object
     self.screen - screen to display on
+    self.xy - x, y position
     """
     
     def __init__(self):
@@ -47,16 +68,27 @@ class Plancton:
         
     def draw(self):
         pygame.draw.circle(self.screen, 0x0066ff, self.xy, self.radius)
+
         
+
 class Fish(pygame.sprite.Sprite):
     """
-    self.velocity - int for velocity
     self.angle - int for angle
-    self.image - loaded image
-    self.rect - Rectangle object
     self.energy - current energy
     self.FONT - font for energy label
+    self.hp - current healt points
+    self.image - loaded image
+    self.moves_fast - boolean, true when fish is moving fast
+    self.rect - Rectangle object
     self.screen - screen to display on
+    self.velocity - int for velocity
+    
+    # counters
+    self.adding_additional_fish_year_counter_faster- counter to count that additional years to fish year are only added 3 times in a row
+    self.adding_additional_fish_year_counter_slower- counter to count that additional years to fish year are only substracted 3 times in a row
+    self.faster_aging_counter - counter of energies in row for faster aging 
+    self.hp_time_counter - counter of frames for fish aging
+    self.slower_aging_counter - counter of energies in row for slower aging
     """
     
     def __init__(self):
@@ -66,74 +98,188 @@ class Fish(pygame.sprite.Sprite):
         self.FONT = pygame.font.SysFont("monospace", 15)
 
         self.image, self.rect = load_png('ball.png')
-        self._randomize_position()
-        self._randomize_vector()
         self.energy = MAX_ENERGY
+        self.hp = MAX_HP
+        self._init_position()
+        self.randomize_vector()
         self.screen = pygame.display.get_surface()
-        
+
+        self._init_counters()
         # self.rect = pygame.draw.circle(screen, 663399, (10, 10), 15)
         # self.area = screen.get_rect()
 
-    def _randomize_position(self):
+    def _init_counters(self):
+        self.hp_time_counter = 0
+        self.faster_aging_counter = 0
+        self.slower_aging_counter = 0
+        self.adding_additional_fish_year_counter_slower = 0
+        self.adding_additional_fish_year_counter_faster = 0
+        
+    def _init_position(self):
         x = random.randrange(SCREEN_WIDTH - self.rect.width)
         y = random.randrange(SCREEN_HEIGHT - self.rect.height)
         self.rect = self.rect.move(x, y)
         
-    def _randomize_vector(self):
+
+    def randomize_vector(self):
+        # random angle
         self.angle = random.uniform(0, 2 * math.pi)
-        # random speed
-        self.velocity = random.randrange(3, 6)
+        self.change_speed()
+        
+    def change_speed(self):
+        # TODO
+        # should the speed be random? 
+        # self.velocity = random.randrange(3, 6)
+        if self.energy >= ENERGY_CHANGE_VELOCITY:
+            self.velocity = 5
+            self.moves_fast = True
+        elif self.energy < ENERGY_CHANGE_VELOCITY:
+            self.velocity = 3
+            if self.energy <= MIN_ENERGY:
+                self.velocity = 1
+            self.moves_fast = False
 
     def update(self):
         # check if dead
-        if self.energy > 0:
+        if self.hp > 0:
             self.rect = self.calc_new_pos()
             x, y, _, _= self.rect
 
             # TODO
+            # stuck on the edges horizontal 
+            # TODO
             # refactor code
             if x > (1000 - self.rect.width):
                 x = 1000 - self.rect.width
-                self._randomize_vector()
+                self.randomize_vector()
             elif x < 0:
                 x = 0
-                self._randomize_vector()
+                self.randomize_vector()
             if y > (500 - self.rect.height):
                 y = 500 - self.rect.height
-                self._randomize_vector()
+                self.randomize_vector()
             elif y < 0:
                 y = 0
-                self._randomize_vector()
-
+                self.randomize_vector()
             self.rect.x = x
             self.rect.y = y
-            self.energy -= 1
+            
+            self.decrease_energy()
+            self.change_speed()
+            self.decrease_hp()
             self.draw_energy_indicators()
+            self.draw_hp_indicators()
+    
+    def decrease_energy(self):
+        """
+        When fish is moving faster it uses up more energy.
+        """
+        if self.energy <= MIN_ENERGY:
+            self.energy = MIN_ENERGY
+            return
+        self.energy -= ENERGY_POINT
+        if self.moves_fast:
+            self.energy -= ADDITIONAL_ENERGY_POINT
         
+    def decrease_hp(self):
+        """
+        HP is decreasing as fish is aging (time is passing).
+        One frame, so one update, is one unit of time.
+        Slower and faster aging according to energy.
+        If in row Energy is below/over ENERGY_FASTER_AGING/ENERGY_SLOWER_AGING
+        health is decreasing 10% faster or slower
+        It can be -/+ only 3 in a row times as you can't inifnitly slower/faster aging
+        """
+        self.hp_time_counter += 1
+        
+        if self.energy >= ENERGY_SLOWER_AGING:
+            self.slower_aging_counter += 1
+        else:
+            self.slower_aging_counter = 0
+            self.adding_additional_fish_year_counter_slower = 0
+            
+        if self.energy <= ENERGY_FASTER_AGING:
+            self.faster_aging_counter += 1
+        else:
+            self.faster_aging_counter = 0
+            self.adding_additional_fish_year_counter_faster = 0
+
+        # It can be -/+ only 3 times in a row as you can't inifnitly slower/faster aging
+        if self.adding_additional_fish_year_counter_slower <= 3:
+            # it is disposable boost up/down
+            if self.slower_aging_counter >= SLOWER_FASTER_AGING_COUNTER:
+                self.hp_time_counter = self.hp_time_counter - ADDITIONAL_FISH_YEAR
+                self.adding_additional_fish_year_counter_slower += 1
+                self.slower_aging_counter = 0
+           
+        if self.adding_additional_fish_year_counter_faster <= 3:
+            if self.faster_aging_counter >= SLOWER_FASTER_AGING_COUNTER:
+                self.hp_time_counter = self.hp_time_counter + ADDITIONAL_FISH_YEAR
+                self.adding_additional_fish_year_counter_faster += 1
+                self.faster_aging_counter = 0
+            
+        if self.hp_time_counter >= FISH_YEAR:
+            self.hp -= 1
+            self.hp_time_counter = 0
+        
+        #print (self.adding_additional_fish_year_counter_slower, self.adding_additional_fish_year_counter_faster, self.hp_time_counter)
+        #print("E: " + str(self.energy), "HP: " + str(self.hp))
+    
     def draw_energy_indicators(self):
         # render text
-        energy_num_label = self.FONT.render(str(self.energy), 1, (0, 0, 0))
+        energy_num_label = self.FONT.render("E" + str(self.energy), 1, (0, 0, 0))
         x, y, width, height = self.rect
-        y_label = y - height/1.5
-        if y <= 0:
-            y_label = y + height*1.5
-        self.screen.blit(energy_num_label, (x, y_label))
+        y_label = y - height/0.8
 
         # draw rect with energy
         energy_ratio = self.energy/MAX_ENERGY
-        energy_label_width = ENERGY_LABEL_WIDTH * energy_ratio
+        label_width = LABEL_WIDTH * energy_ratio
         Rgb = 255
         if energy_ratio > 0.5:
             Rgb = 255 - 255 * energy_ratio
+        y_rect = y - height*0.8
+        if y <= height/0.8:
+            y_label = y + height
+            y_rect = y + height*1.45
+            
+        self.screen.blit(energy_num_label, (x, y_label))
+        pygame.draw.rect(self.screen, (Rgb, 200, 0), (x, y_rect, label_width, LABEL_HEIGHT))
+        
+    def draw_hp_indicators(self):
+        # render text
+        hp_num_label = self.FONT.render("HP" + str(self.hp), 1, (0, 0, 0))
+        x, y, width, height = self.rect
+        y_label = y - height/1.5
+
+        # draw rect with hp
+        hp_ratio = self.hp/MAX_HP
+        label_width = LABEL_WIDTH * hp_ratio
+        Rgb = 255
+        if hp_ratio > 0.5:
+            Rgb = 255 - 255 * hp_ratio
         y_rect = y - height/5
-        if y <= 0:
-            y_rect = y + height*1.2
-        pygame.draw.rect(self.screen, (Rgb, 200, 0), (x, y_rect, energy_label_width, ENERGY_LABEL_HEIGHT))
+        if y <= height/0.8:
+            y_rect = y + height*2.05
+            y_label = y + height*1.6
+
+        self.screen.blit(hp_num_label, (x, y_label))
+        pygame.draw.rect(self.screen, (Rgb, 200, 0), (x, y_rect, label_width, LABEL_HEIGHT))
             
             
     def calc_new_pos(self):
-        (dx, dy) = (self.velocity * math.cos(self.angle),
-                    self.velocity * math.sin(self.angle))
+        dx = self.velocity * math.cos(self.angle)
+        dy = self.velocity * math.sin(self.angle)
+        
+        # if velocity == 0, dx and dy could be == 0 which would stop the fish
+        if 0 < dx < 1:
+            dx = math.ceil(dx)
+        elif -1 < dx < 0:
+            dx = math.floor(dx)
+        if 0 < dy < 1:
+            dy = math.ceil(dy)
+        elif -1 < dy < 0:
+            dy = math.floor(dy)
+        
         return self.rect.move(dx, dy)
     
     def increase_energy(self, value):
