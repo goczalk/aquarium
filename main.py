@@ -40,12 +40,18 @@ from objects import Fish, Plancton
 import pygame
 from pygame.locals import *
 
+""" CONSTANTS """
+""" SCREEN """
+SCREEN_WIDTH = 1000
+SCREEN_HEIGHT = 500
+
+""" PLANCTON """
 PLANCTON_NUM = 100
 
 def main():
     pygame.init()
 
-    size = [1000, 500] #width, height
+    size = [SCREEN_WIDTH, SCREEN_HEIGHT]
     screen = pygame.display.set_mode(size)
     pygame.display.set_caption('Aquarium')
     
@@ -81,7 +87,7 @@ def main():
         # screen.blit(background, ball.rect, ball.rect)
         screen.blit(background, (0, 0))
         
-        ball.update(screen)
+        ball.update()
         
         # which index does the ball bump into, -1 => none
         plankton_index = ball.rect.collidelist([plankton.rect for plankton in plankton_list])
@@ -92,7 +98,7 @@ def main():
         #TODO
         #narysuj plankton raz i sprawdzaj czy zjedzony?? -> da się?
         for plankton in plankton_list:
-            plankton.draw(screen)
+            plankton.draw()
         
         ballsprite.draw(screen)
         
