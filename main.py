@@ -46,7 +46,7 @@ SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 500
 
 """ PLANCTON """
-PLANCTON_NUM = 100
+PLANCTON_NUM = 200
 
 def main():
     pygame.init()

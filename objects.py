@@ -38,16 +38,24 @@ ADDITIONAL_ENERGY_POINT = 1
 """ Health points """
 MAX_HP = 100
 FISH_YEAR = 100 # Number of units (frames) which has to pass to decrease hp
+
 SLOWER_FASTER_AGING_COUNTER = 10 # if so many times in row Energy is below/over ENERGY_FASTER_AGING/ENERGY_SLOWER_AGING
 ADDITIONAL_FISH_YEAR = 0.1 * FISH_YEAR # health is decreasing (10%) faster or slower (such num is -/+ to counter)
                                        # it can be -/+ only 3 times in a row  as you can't inifnitly slower/faster aging
-    
+
+""" REGENERATION """
+HP_REGENERATION_POSSIBLE = 0.9 * MAX_HP
+ENERGY_REGENERATION_POSSIBLE = 0.8 * MAX_ENERGY
+REGENERATION_CYCLE = 20 # number of units fish has to wait for regeneration
+ENERGY_REGENERATION_COST = 0.1 * MAX_ENERGY
+
+
 """ Constants describing width and height of rectangle of energy/hp """
 LABEL_HEIGHT = 5
 LABEL_WIDTH = 30
 
 """ Multiplier for increasing food value """
-MULTIPLIER_FOR_FOOD = 15
+MULTIPLIER_FOR_FOOD = 25
 
 
 class Plancton:
@@ -88,6 +96,7 @@ class Fish(pygame.sprite.Sprite):
     self.adding_additional_fish_year_counter_slower- counter to count that additional years to fish year are only substracted 3 times in a row
     self.faster_aging_counter - counter of energies in row for faster aging 
     self.hp_time_counter - counter of frames for fish aging
+    self.regeneration_counter - counter of frames when fish is regenerating
     self.slower_aging_counter - counter of energies in row for slower aging
     """
     
@@ -114,6 +123,7 @@ class Fish(pygame.sprite.Sprite):
         self.slower_aging_counter = 0
         self.adding_additional_fish_year_counter_slower = 0
         self.adding_additional_fish_year_counter_faster = 0
+        self.regeneration_counter = 0
         
     def _init_position(self):
         x = random.randrange(SCREEN_WIDTH - self.rect.width)
@@ -139,6 +149,21 @@ class Fish(pygame.sprite.Sprite):
                 self.velocity = 1
             self.moves_fast = False
 
+    def change_speed_or_regenerate(self):
+        if self.hp < HP_REGENERATION_POSSIBLE and self.energy >= ENERGY_REGENERATION_POSSIBLE:
+            self.regeneration_counter += 1
+            # fish is not moving when regenerating
+            self.velocity = 0
+            if self.regeneration_counter >= REGENERATION_CYCLE:
+                self.hp += 1
+                if self.hp > MAX_HP:
+                    self.hp = MAX_HP
+                self.energy -= ENERGY_REGENERATION_COST
+        else:
+            self.regeneration_counter = 0
+            self.change_speed()
+        # print ("HP: " + str(self.hp), "E: " + str(self.energy), "v: " + str(self.velocity))
+            
     def update(self):
         # check if dead
         if self.hp > 0:
@@ -165,7 +190,7 @@ class Fish(pygame.sprite.Sprite):
             self.rect.y = y
             
             self.decrease_energy()
-            self.change_speed()
+            self.change_speed_or_regenerate()
             self.decrease_hp()
             self.draw_energy_indicators()
             self.draw_hp_indicators()
