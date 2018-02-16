@@ -48,7 +48,10 @@ SCREEN_HEIGHT = 500
 """ PLANCTON """
 PLANCTON_START_NUM = 200
 PLACTON_TIMER = 300
-PLANCTON_ADD_NUM = 20
+PLANCTON_ADD_NUM = 50
+
+""" FISH """
+FISH_START_NUM = 10
 
 def main():
     pygame.init()
@@ -66,16 +69,23 @@ def main():
     screen.blit(background, (0, 0))
     pygame.display.flip()
 
-    ball = Fish()
+    # list of fish
+    fish_list = []
+    fishsprite_list = []
+    for _ in range(FISH_START_NUM):
+        fish_list.append(Fish())
+
+    for fish in fish_list:
+        fishsprite_list.append(pygame.sprite.RenderPlain(fish))
+
+    # ballsprite = pygame.sprite.RenderPlain(ball)
     
     # list of generatated plancton objects
-    plancton_add_counter = 0
     plankton_list = []
+    plancton_add_counter = 0
     for _ in range(PLANCTON_START_NUM):
         plankton_list.append(Plancton())
     
-    ballsprite = pygame.sprite.RenderPlain(ball)
-
     # Initialise clock
     clock = pygame.time.Clock()
     
@@ -87,7 +97,6 @@ def main():
             if event.type == QUIT:
                 return
 
-        # screen.blit(background, ball.rect, ball.rect)
         screen.blit(background, (0, 0))
         
         # generate additional plancton every PLACTON_TIMER
@@ -97,18 +106,20 @@ def main():
             for _ in range(PLANCTON_ADD_NUM):
                 plankton_list.append(Plancton())
 
-        ball.update()
-        
-        # which index does the ball bump into, -1 => none
-        plankton_index = ball.rect.collidelist([plankton.rect for plankton in plankton_list])
-        if plankton_index != -1:
-            # remove from list and add as much energy as big the plancton was
-            ball.increase_energy((plankton_list.pop(plankton_index)).radius)
-        
+        for fish in fish_list:
+            fish.update()
+
+            # which index does the ball bump into, -1 => none
+            plankton_index = fish.rect.collidelist([plankton.rect for plankton in plankton_list])
+            if plankton_index != -1:
+                # remove from list and add as much energy as big the plancton was
+                fish.increase_energy((plankton_list.pop(plankton_index)).radius)
+
         for plankton in plankton_list:
             plankton.draw()
         
-        ballsprite.draw(screen)
+        for fishsprite in fishsprite_list:
+            fishsprite.draw(screen)
         
         pygame.display.flip()
 
