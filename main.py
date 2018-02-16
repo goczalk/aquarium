@@ -46,7 +46,9 @@ SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 500
 
 """ PLANCTON """
-PLANCTON_NUM = 200
+PLANCTON_START_NUM = 200
+PLACTON_TIMER = 300
+PLANCTON_ADD_NUM = 20
 
 def main():
     pygame.init()
@@ -66,9 +68,10 @@ def main():
 
     ball = Fish()
     
-    # lista przechowująca plankton
+    # list of generatated plancton objects
+    plancton_add_counter = 0
     plankton_list = []
-    for _ in range(PLANCTON_NUM):
+    for _ in range(PLANCTON_START_NUM):
         plankton_list.append(Plancton())
     
     ballsprite = pygame.sprite.RenderPlain(ball)
@@ -87,6 +90,13 @@ def main():
         # screen.blit(background, ball.rect, ball.rect)
         screen.blit(background, (0, 0))
         
+        # generate additional plancton every PLACTON_TIMER
+        plancton_add_counter += 1
+        if plancton_add_counter == PLACTON_TIMER:
+            plancton_add_counter = 0
+            for _ in range(PLANCTON_ADD_NUM):
+                plankton_list.append(Plancton())
+
         ball.update()
         
         # which index does the ball bump into, -1 => none
@@ -95,8 +105,6 @@ def main():
             # remove from list and add as much energy as big the plancton was
             ball.increase_energy((plankton_list.pop(plankton_index)).radius)
         
-        #TODO
-        #narysuj plankton raz i sprawdzaj czy zjedzony?? -> da się?
         for plankton in plankton_list:
             plankton.draw()
         
