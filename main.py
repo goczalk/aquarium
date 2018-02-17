@@ -37,8 +37,10 @@ File with main function
 #     i+=1
 
 from objects import Fish, Plancton
+from AquariumLabels import AquariumLabels
 import pygame
 from pygame.locals import *
+from pgu import gui
 
 """ CONSTANTS """
 """ SCREEN """
@@ -53,17 +55,26 @@ PLANCTON_ADD_NUM = 50
 """ FISH """
 FISH_START_NUM = 10
 
+
 def main():
     pygame.init()
 
     size = [SCREEN_WIDTH, SCREEN_HEIGHT]
-    screen = pygame.display.set_mode(size)
+    screen = pygame.display.set_mode(size, SWSURFACE)
     pygame.display.set_caption('Aquarium')
     
     # Fill background
     background = pygame.Surface(screen.get_size())
     background = background.convert()
     background.fill((250, 250, 250))
+
+    # For labels and sliders 
+    app = gui.App()
+    aqLabel = AquariumLabels()
+    c = gui.Container(align=-1,valign=-1)
+    c.add(aqLabel, 0, 0)
+    app.init(c)
+
 
     # Blit everything to the screen
     screen.blit(background, (0, 0))
@@ -81,21 +92,25 @@ def main():
     # ballsprite = pygame.sprite.RenderPlain(ball)
     
     # list of generatated plancton objects
-    plankton_list = []
+    plancton_list = []
     plancton_add_counter = 0
     for _ in range(PLANCTON_START_NUM):
-        plankton_list.append(Plancton())
+        plancton_list.append(Plancton())
     
     # Initialise clock
     clock = pygame.time.Clock()
-    
-    while 1:
+    done = False
+    while not done:
         # Make sure game doesn't run at more than 60 frames per second
         clock.tick(60)
 
         for event in pygame.event.get():
             if event.type == QUIT:
-                return
+                done = True
+          #  elif e.type is KEYDOWN and e.key == K_ESCAPE: 
+          #      done = True
+            else:
+                app.event(event)
 
         screen.blit(background, (0, 0))
         
@@ -104,23 +119,29 @@ def main():
         if plancton_add_counter == PLACTON_TIMER:
             plancton_add_counter = 0
             for _ in range(PLANCTON_ADD_NUM):
-                plankton_list.append(Plancton())
+                plancton_list.append(Plancton())
+
+        # update labels in Statistic
+        aqLabel.update_plancton_fish_labels(len(plancton_list), len(fish_list))
 
         for fish in fish_list:
             fish.update()
 
             # which index does the ball bump into, -1 => none
-            plankton_index = fish.rect.collidelist([plankton.rect for plankton in plankton_list])
-            if plankton_index != -1:
+            plancton_index = fish.rect.collidelist([plancton.rect for plancton in plancton_list])
+            if plancton_index != -1:
                 # remove from list and add as much energy as big the plancton was
-                fish.increase_energy((plankton_list.pop(plankton_index)).radius)
+                fish.increase_energy((plancton_list.pop(plancton_index)).radius)
 
-        for plankton in plankton_list:
-            plankton.draw()
+        for plancton in plancton_list:
+            plancton.draw()
         
         for fishsprite in fishsprite_list:
             fishsprite.draw(screen)
-        
+
+        # For labels and sliders 
+        app.paint()
+
         pygame.display.flip()
 
 if __name__ == '__main__': main()
