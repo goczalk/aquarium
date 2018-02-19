@@ -1,0 +1,17 @@
+=== JAK DZIAŁA AKWARIUM ===
+
+
+ROZMNAŻANIE
+Rybki podzielone są na dwie płci (losowanie odbywa się podczas tworzenia rybki, kolor rybki także zależy od płci).
+Podczas "update" dla rybki żeńskiej następuje decyzja czy rybka zostawi gdzieś ikrę. Rybka może to zrobić nie częściej niż REPRODUCTION_POSSIBLE, a decyzja jest losowana, prawdopodobieństwo na to wynosi 1/LAYING_EGG_PROBABILITY. W momencie gdy rybka zostawi ikrę, jest ona możliwa do zapłodnienia przez EGG_FRESHNESS jednostek czasu akwarium (odświeżanie ekranu). W momencie gdy na ikrę wpłynie samiec, podejmowana jest decyzja czy chce ją zapłodnić (prawdopodobieństwo określa: 1/LAYING_EGG_PROBABILITY). Jeśli ikra zostanie zapłodniona: pojawi się NEW_FISH_NUM nowych rybek w akwarium.
+Decyzja o rozmnażaniu następuje przed decyzją o regeneracji -> oznacza to, że reprodukcja jest "ważniejsza" dla rybki. Reprodukcja zabiera rybce energię.
+
+
+=== TODO ===
+
+
+****
+PGU (GUI for pygame) download:
+https://code.google.com/archive/p/pgu/downloads
+WARNING: PGU is not working on python3 because of syntax change
+Due to that problem: all (float)x/(float)y had to be added

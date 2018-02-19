@@ -4,14 +4,16 @@ import pygame
 BLACK = (0, 0, 0)
 
 class AquariumLabels(gui.Table):
-    def update_plancton_fish_labels(self, plancton, fish):
+    def update_plancton_fish_labels(self, plancton, male, female):
             self.plancton_label.set_text("Plancton: {0}".format(plancton))
-            self.fish_label.set_text("Fish: {0}".format(fish))
+            self.male_fish_label.set_text("Male fish: {0}".format(male))
+            self.female_fish_label.set_text("Female fish: {0}".format(female))
 
     def __init__(self,**params):
         gui.Table.__init__(self,**params)
         self.plancton_label = gui.Label("Plancton: 0", color=BLACK)
-        self.fish_label = gui.Label("Fish: 0", color=BLACK)
+        self.male_fish_label = gui.Label("Male fish: 0", color=BLACK)
+        self.female_fish_label = gui.Label("Female fish: 0", color=BLACK)
 
         def fullscreen_changed(btn):
             pygame.display.toggle_fullscreen()
@@ -25,7 +27,10 @@ class AquariumLabels(gui.Table):
         #self.td(e)
         
         self.tr()
-        self.td(self.fish_label, align=-1)
+        self.td(self.male_fish_label, align=-1)
+
+        self.tr()
+        self.td(self.female_fish_label, align=-1)
         #e = gui.HSlider(2,1,5,size=20,width=100,height=16,name='size')
         #self.td(e)
         

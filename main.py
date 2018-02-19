@@ -75,7 +75,6 @@ def main():
     c.add(aqLabel, 0, 0)
     app.init(c)
 
-
     # Blit everything to the screen
     screen.blit(background, (0, 0))
     pygame.display.flip()
@@ -85,12 +84,17 @@ def main():
     fishsprite_list = []
     for _ in range(FISH_START_NUM):
         fish_list.append(Fish())
-
+    male_fish_list = []
+    female_fish_list = []
     for fish in fish_list:
-        fishsprite_list.append(pygame.sprite.RenderPlain(fish))
+        if fish.gender == "female":
+            female_fish_list.append(fish)
+        else:
+            male_fish_list.append(fish)
 
-    # ballsprite = pygame.sprite.RenderPlain(ball)
-    
+    # list of fish eggs
+    eggs_list = []    
+
     # list of generatated plancton objects
     plancton_list = []
     plancton_add_counter = 0
@@ -122,10 +126,13 @@ def main():
                 plancton_list.append(Plancton())
 
         # update labels in Statistic
-        aqLabel.update_plancton_fish_labels(len(plancton_list), len(fish_list))
+        aqLabel.update_plancton_fish_labels(len(plancton_list), len(male_fish_list), len(female_fish_list))
 
-        for fish in fish_list:
+        for fish in list(fish_list):
             fish.update()
+            egg = fish.lay_eggs()
+            eggs_list += [egg] if egg is not None else []
+            fish.draw()
 
             # which index does the ball bump into, -1 => none
             plancton_index = fish.rect.collidelist([plancton.rect for plancton in plancton_list])
@@ -133,11 +140,28 @@ def main():
                 # remove from list and add as much energy as big the plancton was
                 fish.increase_energy((plancton_list.pop(plancton_index)).radius)
 
+            # if bumped into egg
+            egg_index = fish.rect.collidelist([egg.rect for egg in eggs_list])
+            if egg_index != -1:
+                if fish.fertilize_eggs():
+                    # remove from list and add fish
+                    eggs_list.pop(egg_index)
+                    new_fish = Fish()
+                    fish_list.append(new_fish)
+                    if new_fish.gender == "female":
+                        female_fish_list.append(new_fish)
+                    else:
+                        male_fish_list.append(new_fish)
+
+        # check eggs and draw
+        for egg in list(eggs_list):
+            if not egg.is_fresh():
+                eggs_list.remove(egg)
+        for egg in eggs_list:
+            egg.draw()
+
         for plancton in plancton_list:
             plancton.draw()
-        
-        for fishsprite in fishsprite_list:
-            fishsprite.draw(screen)
 
         # For labels and sliders 
         app.paint()
