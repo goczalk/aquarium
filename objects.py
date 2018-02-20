@@ -361,7 +361,7 @@ class Fish(pygame.sprite.Sprite):
         y_label = y - height/0.6
 
         # draw rect with energy
-        energy_ratio = float(self.energy)/float(MAX_ENERGY)
+        energy_ratio = self.energy/MAX_ENERGY
         label_width = LABEL_WIDTH * energy_ratio
         Rgb = 255
         if energy_ratio > 0.5:
@@ -383,7 +383,7 @@ class Fish(pygame.sprite.Sprite):
         y_label = y - height/1.2
 
         # draw rect with hp
-        hp_ratio = float(self.hp)/float(MAX_HP)
+        hp_ratio = self.hp/MAX_HP
         label_width = LABEL_WIDTH * hp_ratio
         Rgb = 255
         if hp_ratio > 0.5:

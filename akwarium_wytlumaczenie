@@ -13,5 +13,6 @@ Decyzja o rozmnażaniu następuje przed decyzją o regeneracji -> oznacza to, ż
 ****
 PGU (GUI for pygame) download:
 https://code.google.com/archive/p/pgu/downloads
-WARNING: PGU is not working on python3 because of syntax change
-Due to that problem: all (float)x/(float)y had to be added
+WARNING: PGU when running with python3 requires one manual change:
+pgu/container.py, update(self): "except StyleError,e:" to "except StyleError as e:"
+then reinstall
