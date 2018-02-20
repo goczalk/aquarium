@@ -1,10 +1,43 @@
 === JAK DZIAŁA AKWARIUM ===
 
+PLANKTON
+Początkową wartość planktonu określa PLANCTON_START_NUM. Planktonu przybywa raz na PLANCTON_TIMER o stałą wartość PLANCTON_ADD_NUM.
+Plankton to zielone kulki, których wielkość waha się od MIN_PL_RADIUS do MAX_PL_RADIUS.
+Im większy plankton tym więcej energii może dać rybce zjedzenie go.
+Pojawia się w losowych miejscach na ekranie.
 
-ROZMNAŻANIE
+RYBKA
+Rybka przedstawiona jest jako koło o danym kolorze. (niebieski/różowy)
+Podczas tworzenia rybki:
+-losowana jest jej płeć, na tej podstawie wybierany jest także kolor
+-losowana jest pozycja początkowa
+-przydzielane są punkty energii oraz zdrowia (health points - HP), odpowiednio MAX_ENERGY oraz MAX_HP
+-losowany jest wektor ruchu
+
+JEDZENIE/ZDOBYWANIE ENERGII
+Każdorazowo jeśli rybka wpłynie na plankton otrzymuje ilość energii odpowiadająca rozmiarowi planktonu przemnożonego przez MULTIPLIER_FOR_FOOD. Oczywiście rybka nie może mieć energii większej niż MAX_ENERGY.
+
+PRĘDKOŚĆ RYBKI
+Prędkość poruszania się rybki zależy od jej energii. Powyżej/bądź równo z wartością ENERGY_CHANGE_VELOCITY rybka porusza się z prędkością 5 (hardcoded), poniżej porusza się z prędkością 3 (hardcoded). W momencie gdy rybka ma minimalną wartość energii MIN_ENERGY porusza się z prędkością 1 (hardcoded).
+
+PORUSZANIE SIĘ RYBKI
+Każdy ruch rybki kosztuje ją ENERGY_POINT, jeśli rybka porusza się szybko, odbierany jest jej dodatkowy ADDITIONAL_ENERGY_POINT. Energia rybki nie może spaść poniżej MIN_ENERGY.
+
+STARZENIE SIĘ RYBKI
+Rybka naturalnie "starzeje się" - traci punkty HP wraz z przemijającym czasem.
+W momencie gdy mienie FISH_YEAR jednostek czasu, rybka traci punkt życia.
+Starzenie się można przyspieszyć bądź zwolnić. Jeśli pod rząd przez SLOWER_FASTER_AGING_COUNTER jednostek czasu rybka utrzyma poziom energii poniżej/powyżej ENERGY_FASTER_AGING/ENERGY_SLOWER_AGING od ogólnego licznika "dni" w jednym roku odpowiednio jest dodawana bądź odejmowana wartość ADDITIONAL_FISH_YEAR. Co oznacza, że rybka się szybciej bądź wolniej starzeje.
+Ponieważ nie można "odmładzać się" oraz "postarzać" w nieskończoność, nawet jeśli stan energii będzie utrzymywał się przez dłuższy czas, zmienić w ten sposób swój wiek może tylko 3 (hardcoded) pod rząd. Jeśli w międzyczasie energia rybki na chwilę spadnie, a później wzrośnie - licznik się resetuje.
+
+REGENERACJA RYBKI
+Rybka może "zdecydować" o próbie regeneracji swojego życia kosztem posiadanej energii.
+Jeśli ilość punktów życia jest mniejsza bądź równa HP_REGENERATION_POSSIBLE oraz
+energia jest większa bądź równa ENERGY_REGENERATION_POSSIBLE rybka może zacząć się regenerować. Podczas regeneracji rybka nie porusza się, a trwa to tyle jednostek czasu ile określa REGENERATION_CYCLE. Następnie rybka dostaje jeden dodatkowy punkt życia (HP) - oczywiście nie powyżej wartości maksymalnej. W zamian rybka traci ENERGY_REGENERATION_COST energii.
+
+ROZMNAŻANIE RYBEK
 Rybki podzielone są na dwie płci (losowanie odbywa się podczas tworzenia rybki, kolor rybki także zależy od płci).
-Podczas "update" dla rybki żeńskiej następuje decyzja czy rybka zostawi gdzieś ikrę. Rybka może to zrobić nie częściej niż REPRODUCTION_POSSIBLE, a decyzja jest losowana, prawdopodobieństwo na to wynosi 1/LAYING_EGG_PROBABILITY. W momencie gdy rybka zostawi ikrę, jest ona możliwa do zapłodnienia przez EGG_FRESHNESS jednostek czasu akwarium (odświeżanie ekranu). W momencie gdy na ikrę wpłynie samiec, podejmowana jest decyzja czy chce ją zapłodnić (prawdopodobieństwo określa: 1/LAYING_EGG_PROBABILITY). Jeśli ikra zostanie zapłodniona: pojawi się NEW_FISH_NUM nowych rybek w akwarium.
-Decyzja o rozmnażaniu następuje przed decyzją o regeneracji -> oznacza to, że reprodukcja jest "ważniejsza" dla rybki. Reprodukcja zabiera rybce energię.
+Z każdym ruchem dla rybki żeńskiej następuje decyzja czy rybka zostawi gdzieś ikrę. Rybka może to zrobić nie częściej niż REPRODUCTION_POSSIBLE, a decyzja jest losowana, prawdopodobieństwo na to wynosi 1/LAYING_EGG_PROBABILITY. W momencie gdy rybka zostawi ikrę, jest ona możliwa do zapłodnienia przez EGG_FRESHNESS jednostek czasu akwarium (odświeżanie ekranu). W momencie gdy na ikrę wpłynie samiec, podejmowana jest decyzja czy chce ją zapłodnić (prawdopodobieństwo określa: 1/LAYING_EGG_PROBABILITY). Jeśli ikra zostanie zapłodniona: pojawi się NEW_FISH_NUM nowych rybek w akwarium.
+Decyzja o rozmnażaniu następuje przed decyzją o regeneracji -> oznacza to, że reprodukcja jest "ważniejsza" dla rybki. Reprodukcja zabiera rybce ENERGY_REPRODUCTION_COST energii.
 
 
 === TODO ===

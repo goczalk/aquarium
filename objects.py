@@ -14,8 +14,8 @@ SCREEN_HEIGHT = 500
 
 
 """ PLANCTON """
-MIN_RADIUS = 2
-MAX_RADIUS = 4
+MIN_PL_RADIUS = 2
+MAX_PL_RADIUS = 4
 
 
 """ EGG """
@@ -83,7 +83,7 @@ class Plancton:
     def __init__(self):
         x = random.randrange(SCREEN_WIDTH)
         y = random.randrange(SCREEN_HEIGHT)
-        self.radius = random.randrange(MIN_RADIUS, MAX_RADIUS)
+        self.radius = random.randrange(MIN_PL_RADIUS, MAX_PL_RADIUS)
         self.xy = (x, y)
         self.rect = pygame.Rect(self.xy, (self.radius, self.radius))
         self.screen = pygame.display.get_surface()
@@ -213,7 +213,7 @@ class Fish(pygame.sprite.Sprite):
             self.moves_fast = False
 
     def change_speed_or_regenerate(self):
-        if self.hp < HP_REGENERATION_POSSIBLE and self.energy >= ENERGY_REGENERATION_POSSIBLE:
+        if self.hp <= HP_REGENERATION_POSSIBLE and self.energy >= ENERGY_REGENERATION_POSSIBLE:
             self.regeneration_counter += 1
             # fish is not moving when regenerating
             self.velocity = 0
@@ -225,7 +225,6 @@ class Fish(pygame.sprite.Sprite):
         else:
             self.regeneration_counter = 0
             self.change_speed()
-        # print ("HP: " + str(self.hp), "E: " + str(self.energy), "v: " + str(self.velocity))
 
     def draw(self):
         self.update()

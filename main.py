@@ -49,7 +49,7 @@ SCREEN_HEIGHT = 500
 
 """ PLANCTON """
 PLANCTON_START_NUM = 200
-PLACTON_TIMER = 300
+PLANCTON_TIMER = 300
 PLANCTON_ADD_NUM = 50
 
 """ FISH """
@@ -118,9 +118,9 @@ def main():
 
         screen.blit(background, (0, 0))
         
-        # generate additional plancton every PLACTON_TIMER
+        # generate additional plancton every PLANCTON_TIMER
         plancton_add_counter += 1
-        if plancton_add_counter == PLACTON_TIMER:
+        if plancton_add_counter == PLANCTON_TIMER:
             plancton_add_counter = 0
             for _ in range(PLANCTON_ADD_NUM):
                 plancton_list.append(Plancton())
