@@ -41,7 +41,17 @@ Decyzja o rozmnażaniu następuje przed decyzją o regeneracji -> oznacza to, ż
 
 
 === TODO ===
-
+-albo można uzależnić szybkość regeneracji energii od poziomu najedzenia oraz wieku
+-im starsza rybka tym krócej może uciekać
+- rodzaj rybki definiuje jej minimalny i maksymalny rozmiar do którego może dorosnąć. przy tworzeniu rybki dla każdego osobnika są losowane jego osobnicze atrybuty (na przyklad gatunek małej rybki może być rozmiary od 2 do 6, a TEN osobnik może być od 2 (więc z taką wielkością zaczyna) do 5).
+-podstawą jest to, że zawsze rybka większa może zjeść mniejszą, czyli nie jest tak, że rybki małe nie mogą zjadać innych małych rybek, mogą jeśli będą odpowiednio duże.-
+-jeśli rybka przekroczy jakąś z góry ustaloną wielkość to zjadanie planktonu nie daje jej więcej energii. 
+-Gdy rybka robi się coraz większa, potrzebuje coraz więcej pożywienia, dlatego ilość energii jaką daje jej zjedzenie danej rybki/planktonu zależy od jej wielkości. Przy pewnym rozmiarze rybki nie będzie jej się opłacało jeść planktonu. [Czyli robimy ze wszystkich drapieżników - nie wiem czy to dobrze :D]
+-podczas ruchu zużywana jest energia, a ile jest jej zużywane określa rozmiar rybki. Rybki mniejsze zużyją mniej energii na ruch, rybki większe zużywają jej więcej. 
+-POLE WIDZENIA zdecydowałam, że będzie takie samo dla każdej rybki, ale jak wiadomo większą rybkę lepiej widać z dużej odległości niż mniejszą.
+-dlatego zdecydowałam, że podczas wyliczania tablicy z danymi "jak daleko, który obiekt jest ode mnie" będę brała pod uwagę wielkość tego obiektu więc ROZMIAR (plankton na przykład miały rozmiar 1), i w momencie gdy rybka będzie w odległości 1 od niego to może go zobaczyć , jeśli rybka ma rozmiar 4, jest na współrzędnej 10, to żeby ją zobaczyć inna rybka musi znaleźć się na współrzędnej 6 bądź 14. (czyli w odległości 4 od niej).
+-HP dla rybek losowane? Energia też?
+-rybki nigdy nie umrą jeśli będą miały żarcia -> ze starości!
 
 ****
 PGU (GUI for pygame) download:

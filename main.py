@@ -42,6 +42,9 @@ import pygame
 from pygame.locals import *
 from pgu import gui
 
+
+import time
+
 """ CONSTANTS """
 """ SCREEN """
 SCREEN_WIDTH = 1000
@@ -84,13 +87,13 @@ def main():
     fishsprite_list = []
     for _ in range(FISH_START_NUM):
         fish_list.append(Fish())
-    male_fish_list = []
-    female_fish_list = []
-    for fish in fish_list:
-        if fish.gender == "female":
-            female_fish_list.append(fish)
-        else:
-            male_fish_list.append(fish)
+    #male_fish_list = []
+    #female_fish_list = []
+    #for fish in fish_list:
+    #    if fish.gender == "female":
+    #        female_fish_list.append(fish)
+    #    else:
+    #        male_fish_list.append(fish)
 
     # list of fish eggs
     eggs_list = []    
@@ -118,6 +121,10 @@ def main():
 
         screen.blit(background, (0, 0))
         
+        # male and female counters
+        male_counter = 0
+        female_counter = 0 
+
         # generate additional plancton every PLANCTON_TIMER
         plancton_add_counter += 1
         if plancton_add_counter == PLANCTON_TIMER:
@@ -125,22 +132,40 @@ def main():
             for _ in range(PLANCTON_ADD_NUM):
                 plancton_list.append(Plancton())
 
-        # update labels in Statistic
-        aqLabel.update_plancton_fish_labels(len(plancton_list), len(male_fish_list), len(female_fish_list))
+        copy_list = list(fish_list)
+        for fish in copy_list:
+            if fish.gender == "female":
+                female_counter += 1
+            else:
+                male_counter += 1
 
-        for fish in list(fish_list):
             fish.update()
             egg = fish.lay_eggs()
             eggs_list += [egg] if egg is not None else []
             fish.draw()
 
+            # check if bumped into plancton
             # which index does the ball bump into, -1 => none
             plancton_index = fish.rect.collidelist([plancton.rect for plancton in plancton_list])
             if plancton_index != -1:
                 # remove from list and add as much energy as big the plancton was
                 fish.increase_energy((plancton_list.pop(plancton_index)).radius)
 
-            # if bumped into egg
+            # check if bumped into other fish
+
+            # uwazaj na przypadek samozjadania gdy rybka rosnie
+            fish_index = fish.rect.collidelist(fish_list)
+            if fish_index != -1:
+                if fish.size > fish_list[fish_index].size:
+                    eaten_fish = fish_list.pop(fish_index)
+                    # remove from list and add as much energy as big the fish was
+                    fish.increase_energy(eaten_fish.size)
+                    if eaten_fish.gender == "female":
+                        female_counter -= 1
+                    else:
+                        male_counter -= 1
+
+            # check if bumped into egg
             egg_index = fish.rect.collidelist([egg.rect for egg in eggs_list])
             if egg_index != -1:
                 if fish.fertilize_eggs():
@@ -149,9 +174,12 @@ def main():
                     new_fish = Fish()
                     fish_list.append(new_fish)
                     if new_fish.gender == "female":
-                        female_fish_list.append(new_fish)
+                        female_counter += 1
                     else:
-                        male_fish_list.append(new_fish)
+                        male_counter += 1
+
+        # update labels in Statistic
+        aqLabel.update_plancton_fish_labels(len(plancton_list), male_counter, female_counter)
 
         # check eggs and draw
         for egg in list(eggs_list):

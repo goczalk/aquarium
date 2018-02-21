@@ -23,7 +23,8 @@ EGG_FRESHNESS = 500
 
 
 """ FISH """
-FISH_SIZE = 18
+MIN_FISH_SIZE = 13
+MAX_FISH_SIZE = 18
 
 """ Enegry"""
 MAX_ENERGY = 100
@@ -83,7 +84,7 @@ class Plancton:
     def __init__(self):
         x = random.randrange(SCREEN_WIDTH)
         y = random.randrange(SCREEN_HEIGHT)
-        self.radius = random.randrange(MIN_PL_RADIUS, MAX_PL_RADIUS)
+        self.radius = random.randrange(MIN_PL_RADIUS, MAX_PL_RADIUS+1)
         self.xy = (x, y)
         self.rect = pygame.Rect(self.xy, (self.radius, self.radius))
         self.screen = pygame.display.get_surface()
@@ -152,7 +153,7 @@ class Fish(pygame.sprite.Sprite):
         #self.image, self.rect = load_png('ball.png')
         self.randomize_gender()
         self.set_colour()
-        self.size = FISH_SIZE
+        self.randomize_size()
         xy = self._init_position()
         
         self.rect = pygame.Rect(xy, (self.size, self.size))
@@ -193,6 +194,9 @@ class Fish(pygame.sprite.Sprite):
             self.colour = 0xcc0066
         else:
             self.colour = 0x333399
+
+    def randomize_size(self):
+        self.size = random.randrange(MIN_FISH_SIZE, MAX_FISH_SIZE+1)
 
     def randomize_vector(self):
         # random angle
