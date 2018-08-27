@@ -107,9 +107,20 @@ def main():
     # Initialise clock
     clock = pygame.time.Clock()
     done = False
+    # accumulator = 0
+    #kork_Czasowy (dt) = 1 [ms]
     while not done:
         # Make sure game doesn't run at more than 60 frames per second
         clock.tick(60)
+        
+        # roznica w czasie miedzy kolejnymi ramkami
+
+        # delta = current - last
+        # last = current
+        # acumulator += delta
+        # while(acumulator > dt ){
+        # for (ile-razy-szybciej) {krok symulacji}
+        # acumulator -= dt}
 
         for event in pygame.event.get():
             if event.type == QUIT:

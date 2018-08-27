@@ -39,8 +39,8 @@ ENERGY_CHANGE_VELOCITY = MAX_ENERGY/2
 # TODO
 # 'slow' speed: 1 move = 1 energy point?
 # 'fast' speed: 1 move = 2 energy point?
-ENERGY_POINT = 1
-ADDITIONAL_ENERGY_POINT = 1
+ENERGY_POINT = 0.25
+ADDITIONAL_ENERGY_POINT = 0.25
 
 """ Health points """
 MAX_HP = 100
@@ -70,7 +70,7 @@ LABEL_HEIGHT = 5
 LABEL_WIDTH = 30
 
 """ Multiplier for increasing food value """
-MULTIPLIER_FOR_FOOD = 25
+MULTIPLIER_FOR_FOOD = 5
 
 
 class Plancton:
@@ -208,10 +208,10 @@ class Fish(pygame.sprite.Sprite):
         # should the speed be random? 
         # self.velocity = random.randrange(3, 6)
         if self.energy >= ENERGY_CHANGE_VELOCITY:
-            self.velocity = 5
+            self.velocity = 3
             self.moves_fast = True
         elif self.energy < ENERGY_CHANGE_VELOCITY:
-            self.velocity = 3
+            self.velocity = 2
             if self.energy <= MIN_ENERGY:
                 self.velocity = 1
             self.moves_fast = False
@@ -263,7 +263,7 @@ class Fish(pygame.sprite.Sprite):
             self.rect.y = y
             
             self.decrease_energy()
-            self.change_speed_or_regenerate()
+            self.change_speed_or_regenerate()          
             self.decrease_hp()
             self.draw_energy_indicators()
             self.draw_hp_indicators()
@@ -401,7 +401,7 @@ class Fish(pygame.sprite.Sprite):
             
             
     def calc_new_pos(self):
-        dx = self.velocity * math.cos(self.angle)
+        dx = self.velocity * math.cos(self.angle) # * dt
         dy = self.velocity * math.sin(self.angle)
         
         # if velocity == 0, dx and dy could be == 0 which would stop the fish
