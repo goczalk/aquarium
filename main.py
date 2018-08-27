@@ -42,7 +42,8 @@ import pygame
 from pygame.locals import *
 from pgu import gui
 
-
+import random
+import math
 import time
 
 """ CONSTANTS """
@@ -51,9 +52,11 @@ SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 500
 
 """ PLANCTON """
-PLANCTON_START_NUM = 200
-PLANCTON_TIMER = 300
-PLANCTON_ADD_NUM = 50
+PLANCTON_START_NUM = 50
+PLANCTON_TIMER = 360
+PLANCTON_MAX_TO_ADD = 80
+MAX_RADIANS_VALUE = 180 * 0.017
+RADIANS_CHANGE = MAX_RADIANS_VALUE/8 # how many radians are added to random range max to calculate sinus of how much plancton will be produced. bigger the division, slower the sinusoidal func will go
 
 """ FISH """
 FISH_START_NUM = 10
@@ -101,6 +104,7 @@ def main():
     # list of generatated plancton objects
     plancton_list = []
     plancton_add_counter = 0
+    plancton_random_range_radians = 0
     for _ in range(PLANCTON_START_NUM):
         plancton_list.append(Plancton())
     
@@ -140,7 +144,22 @@ def main():
         plancton_add_counter += 1
         if plancton_add_counter == PLANCTON_TIMER:
             plancton_add_counter = 0
-            for _ in range(PLANCTON_ADD_NUM):
+
+            random_start = int(plancton_random_range_radians * 1000)
+            plancton_random_range_radians += RADIANS_CHANGE
+            random_stop = int(plancton_random_range_radians * 1000)
+
+            sinus_value = math.sin(
+                                random.randrange(
+                                    random_start,
+                                    random_stop)/1000)
+
+            number_of_plancton_to_add = int(PLANCTON_MAX_TO_ADD * sinus_value)
+
+            if plancton_random_range_radians >= MAX_RADIANS_VALUE :
+                plancton_random_range_radians = 0
+
+            for _ in range(number_of_plancton_to_add):
                 plancton_list.append(Plancton())
 
         copy_list = list(fish_list)

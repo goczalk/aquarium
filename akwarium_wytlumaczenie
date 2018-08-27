@@ -1,7 +1,8 @@
 === JAK DZIAŁA AKWARIUM ===
 
 PLANKTON
-Początkową wartość planktonu określa PLANCTON_START_NUM. Planktonu przybywa raz na PLANCTON_TIMER o stałą wartość PLANCTON_ADD_NUM.
+Początkową wartość planktonu określa PLANCTON_START_NUM. Planktonu przybywa raz na PLANCTON_TIMER o wartość wyliczoną z funkcji sinusa.
+Ilość dodawanego planktonu to % z PLANCTON_MAX_TO_ADD. % ten to wartość funkcji sinus, wyliczoną z argumentu, który jest losową wartością. Wartości spośród, których argument jest losowany są zwiększane co PLANCTON_TIMER o RADIANS_CHANGE.
 Plankton to zielone kulki, których wielkość waha się od MIN_PL_RADIUS do MAX_PL_RADIUS.
 Im większy plankton tym więcej energii może dać rybce zjedzenie go.
 Pojawia się w losowych miejscach na ekranie.
