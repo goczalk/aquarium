@@ -16,11 +16,11 @@ SCREEN_HEIGHT = 500
 """ PLANCTON """
 MIN_PL_RADIUS = 2
 MAX_PL_RADIUS = 4
+PLANCTON_FRESHNESS = 500
 
 
 """ EGG """
 EGG_FRESHNESS = 500
-
 
 """ FISH """
 MIN_FISH_SIZE = 13
@@ -75,6 +75,7 @@ MULTIPLIER_FOR_FOOD = 5
 
 class Plancton:
     """
+    self.freshness - num of units that plancton is fresh
     self.radius - radius of plancton
     self.rect - Rectangle object
     self.screen - screen to display on
@@ -88,7 +89,15 @@ class Plancton:
         self.xy = (x, y)
         self.rect = pygame.Rect(self.xy, (self.radius, self.radius))
         self.screen = pygame.display.get_surface()
-        
+        self.freshness = 0
+    
+    def is_fresh(self):
+        """
+        Returns true if plancton is fresh
+        """
+        self.freshness += 1
+        return True if self.freshness < PLANCTON_FRESHNESS else False        
+
     def draw(self):
         pygame.draw.circle(self.screen, 0x339966, self.xy, self.radius)
 

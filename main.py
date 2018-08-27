@@ -199,6 +199,10 @@ def main():
         for egg in eggs_list:
             egg.draw()
 
+        # check plancton and draw
+        for plancton in plancton_list:
+            if not plancton.is_fresh():
+                plancton_list.remove(plancton)
         for plancton in plancton_list:
             plancton.draw()
 
