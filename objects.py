@@ -241,6 +241,8 @@ class Fish(pygame.sprite.Sprite):
 
     def draw(self):
         self.update()
+        self.draw_energy_indicators()
+        self.draw_hp_indicators()
         pygame.draw.circle(self.screen, self.colour, (self.rect.x, self.rect.y), self.size)
 
     def update(self):
@@ -274,8 +276,6 @@ class Fish(pygame.sprite.Sprite):
             self.decrease_energy()
             self.change_speed_or_regenerate()          
             self.decrease_hp()
-            self.draw_energy_indicators()
-            self.draw_hp_indicators()
     
     def decrease_energy(self):
         """
