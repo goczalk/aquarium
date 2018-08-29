@@ -2,40 +2,6 @@
 File with main function
 """
 
-# import time
-# import render
-#
-# since_last_update = 0.0
-# last_update = time.clock()
-#
-# print last_update
-#
-# accumulator = 0.0
-#
-# #30 actualizations per sec
-# TIME_STEP = 0.03
-# #max 1FPS
-# MAX_ACCUMULATED_TIME = 1.0
-#
-#
-# i = 0
-# while ( i != 10):
-#     since_last_update = time.clock() - last_update
-#     since_last_update = max(0, since_last_update)
-#     last_update += since_last_update
-#     accumulator += since_last_update
-#     accumulator = min(MAX_ACCUMULATED_TIME, accumulator)
-#
-#     #grab input
-#     if (i == 2):
-#         time.sleep(0.5)
-#     while( accumulator > TIME_STEP):
-#         #update
-#         print 'Klaudia'
-#         accumulator -= TIME_STEP
-#     #render
-#     i+=1
-
 from objects import Fish, Plancton
 from AquariumLabels import AquariumLabels
 import pygame
@@ -142,25 +108,10 @@ def main():
 
         # generate additional plancton every PLANCTON_TIMER
         plancton_add_counter += 1
-        if plancton_add_counter == PLANCTON_TIMER:
-            plancton_add_counter = 0
-
-            random_start = int(plancton_random_range_radians * 1000)
-            plancton_random_range_radians += RADIANS_CHANGE
-            random_stop = int(plancton_random_range_radians * 1000)
-
-            sinus_value = math.sin(
-                                random.randrange(
-                                    random_start,
-                                    random_stop)/1000)
-
-            number_of_plancton_to_add = int(PLANCTON_MAX_TO_ADD * sinus_value)
-
-            if plancton_random_range_radians >= MAX_RADIANS_VALUE :
-                plancton_random_range_radians = 0
-
-            for _ in range(number_of_plancton_to_add):
-                plancton_list.append(Plancton())
+        plancton_add_counter, \
+            plancton_list, \
+                plancton_random_range_radians = generate_additional_plancton(plancton_add_counter, plancton_list,
+                                                            plancton_random_range_radians)
 
         copy_list = list(fish_list)
         for fish in copy_list:
@@ -229,5 +180,29 @@ def main():
         app.paint()
 
         pygame.display.flip()
+
+
+def generate_additional_plancton(plancton_add_counter, plancton_list, plancton_random_range_radians):
+    if plancton_add_counter == PLANCTON_TIMER:
+        plancton_add_counter = 0
+
+        random_start = int(plancton_random_range_radians * 1000)
+        plancton_random_range_radians += RADIANS_CHANGE
+        random_stop = int(plancton_random_range_radians * 1000)
+
+        sinus_value = math.sin(
+            random.randrange(
+                random_start,
+                random_stop) / 1000)
+
+        number_of_plancton_to_add = int(PLANCTON_MAX_TO_ADD * sinus_value)
+
+        if plancton_random_range_radians >= MAX_RADIANS_VALUE:
+            plancton_random_range_radians = 0
+
+        for _ in range(number_of_plancton_to_add):
+            plancton_list.append(Plancton())
+    return plancton_add_counter, plancton_list, plancton_random_range_radians
+
 
 if __name__ == '__main__': main()
