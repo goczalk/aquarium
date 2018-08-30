@@ -7,7 +7,12 @@ import math
 import pygame
 from render import load_png
 
+
 """ CONSTANTS """
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+
+
 """ SCREEN """
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 500
@@ -26,11 +31,11 @@ EGG_FRESHNESS = 500
 MIN_FISH_SIZE = 13
 MAX_FISH_SIZE = 18
 
+FISH_YEAR = 200 # Number of units (frames) which has to pass to increase age
+
 """ Enegry"""
 MAX_ENERGY = 100
 MIN_ENERGY = 1
-ENERGY_FASTER_AGING = 0.2 * MAX_ENERGY
-ENERGY_SLOWER_AGING = 0.8 * MAX_ENERGY
 
 # TODO
 # MAX_ENERGY/2?
@@ -41,10 +46,13 @@ ENERGY_CHANGE_VELOCITY = MAX_ENERGY/2
 # 'fast' speed: 1 move = 2 energy point?
 ENERGY_POINT = 0.25
 ADDITIONAL_ENERGY_POINT = 0.25
+MAX_HUNGRY_TIME = 0.3 * FISH_YEAR
+MIN_ENERGY_HP_LOSE = 0.1 * MAX_ENERGY
 
 """ Health points """
 MAX_HP = 100
-FISH_YEAR = 100 # Number of units (frames) which has to pass to decrease hp
+HP_FASTER_AGING = 0.2 * MAX_HP
+HP_SLOWER_AGING = 0.8 * MAX_HP
 
 SLOWER_FASTER_AGING_COUNTER = 10 # if so many times in row Energy is below/over ENERGY_FASTER_AGING/ENERGY_SLOWER_AGING
 ADDITIONAL_FISH_YEAR = 0.1 * FISH_YEAR # health is decreasing (10%) faster or slower (such num is -/+ to counter)
@@ -169,6 +177,7 @@ class Fish(pygame.sprite.Sprite):
 
         self.energy = MAX_ENERGY
         self.hp = MAX_HP
+        self.age = 1
         self.randomize_vector()
         self.screen = pygame.display.get_surface()
 
@@ -177,11 +186,12 @@ class Fish(pygame.sprite.Sprite):
         # self.area = screen.get_rect()
 
     def _init_counters(self):
-        self.hp_time_counter = 0
+        self.age_time_counter = 0
         self.faster_aging_counter = 0
         self.slower_aging_counter = 0
         self.adding_additional_fish_year_counter_slower = 0
         self.adding_additional_fish_year_counter_faster = 0
+        self.hp_time_counter = 0
         self.regeneration_counter = 0
         self.reproduction_counter = 0
         
@@ -244,6 +254,7 @@ class Fish(pygame.sprite.Sprite):
         self.draw_energy_indicators()
         self.draw_hp_indicators()
         pygame.draw.circle(self.screen, self.colour, (self.rect.x, self.rect.y), self.size)
+        self.draw_age()
 
     def update(self):
         """
@@ -274,8 +285,9 @@ class Fish(pygame.sprite.Sprite):
             self.rect.y = y
             
             self.decrease_energy()
-            self.change_speed_or_regenerate()          
+            self.change_speed_or_regenerate()
             self.decrease_hp()
+            self.aging()
     
     def decrease_energy(self):
         """
@@ -287,25 +299,38 @@ class Fish(pygame.sprite.Sprite):
         self.energy -= ENERGY_POINT
         if self.moves_fast:
             self.energy -= ADDITIONAL_ENERGY_POINT
-        
+
     def decrease_hp(self):
         """
-        HP is decreasing as fish is aging (time is passing).
+        Hp is decreasing when fish is hungry (does not have enough energy) or/and when it is sick
+        """
+        if self.energy < MIN_ENERGY_HP_LOSE:
+            self.hp_time_counter += 1
+            if self.hp_time_counter >= MAX_HUNGRY_TIME:
+                self.hp -= 1
+                self.hp_time_counter = 0
+        else:
+            self.hp_time_counter = 0
+
+
+    def aging(self):
+        """
+        Age is increasing as fish is aging (time is passing).
         One frame, so one update, is one unit of time.
         Slower and faster aging according to energy.
-        If in row Energy is below/over ENERGY_FASTER_AGING/ENERGY_SLOWER_AGING
+        If in row HP is below/over HP_FASTER_AGING/HP_SLOWER_AGING
         health is decreasing 10% faster or slower
         It can be -/+ only 3 in a row times as you can't inifnitly slower/faster aging
         """
-        self.hp_time_counter += 1
+        self.age_time_counter += 1
         
-        if self.energy >= ENERGY_SLOWER_AGING:
+        if self.energy >= HP_SLOWER_AGING:
             self.slower_aging_counter += 1
         else:
             self.slower_aging_counter = 0
             self.adding_additional_fish_year_counter_slower = 0
             
-        if self.energy <= ENERGY_FASTER_AGING:
+        if self.energy <= HP_FASTER_AGING:
             self.faster_aging_counter += 1
         else:
             self.faster_aging_counter = 0
@@ -315,22 +340,19 @@ class Fish(pygame.sprite.Sprite):
         if self.adding_additional_fish_year_counter_slower <= 3:
             # it is disposable boost up/down
             if self.slower_aging_counter >= SLOWER_FASTER_AGING_COUNTER:
-                self.hp_time_counter = self.hp_time_counter - ADDITIONAL_FISH_YEAR
+                self.age_time_counter = self.age_time_counter - ADDITIONAL_FISH_YEAR
                 self.adding_additional_fish_year_counter_slower += 1
                 self.slower_aging_counter = 0
            
         if self.adding_additional_fish_year_counter_faster <= 3:
             if self.faster_aging_counter >= SLOWER_FASTER_AGING_COUNTER:
-                self.hp_time_counter = self.hp_time_counter + ADDITIONAL_FISH_YEAR
+                self.age_time_counter = self.age_time_counter + ADDITIONAL_FISH_YEAR
                 self.adding_additional_fish_year_counter_faster += 1
                 self.faster_aging_counter = 0
             
-        if self.hp_time_counter >= FISH_YEAR:
-            self.hp -= 1
-            self.hp_time_counter = 0
-        
-        #print (self.adding_additional_fish_year_counter_slower, self.adding_additional_fish_year_counter_faster, self.hp_time_counter)
-        #print("E: " + str(self.energy), "HP: " + str(self.hp))
+        if self.age_time_counter >= FISH_YEAR:
+            self.age += 1
+            self.age_time_counter = 0
     
     def lay_eggs(self):
         """
@@ -347,6 +369,7 @@ class Fish(pygame.sprite.Sprite):
                         self.reproduction_counter = 0
                         self.draw_energy_indicators()
                         return Egg(self.rect.x, self.rect.y)
+
     def fertilize_eggs(self):
         """
         Probability of fertilizing happening: LAYING_EGG_PROBABILITY
@@ -366,7 +389,7 @@ class Fish(pygame.sprite.Sprite):
 
     def draw_energy_indicators(self):
         # render text
-        energy_num_label = self.FONT.render("E" + str(self.energy), 1, (0, 0, 0))
+        energy_num_label = self.FONT.render("E" + str(self.energy), 1, BLACK)
         x, y, width, height = self.rect
         x = x - self.size
         y = y - self.size
@@ -388,7 +411,7 @@ class Fish(pygame.sprite.Sprite):
         
     def draw_hp_indicators(self):
         # render text
-        hp_num_label = self.FONT.render("HP" + str(self.hp), 1, (0, 0, 0))
+        hp_num_label = self.FONT.render("HP" + str(self.hp), 1, BLACK)
         x, y, width, height = self.rect
         x = x - self.size
         y = y - self.size
@@ -407,8 +430,14 @@ class Fish(pygame.sprite.Sprite):
 
         self.screen.blit(hp_num_label, (x, y_label))
         pygame.draw.rect(self.screen, (Rgb, 200, 0), (x, y_rect, label_width, LABEL_HEIGHT))
-            
-            
+
+    def draw_age(self):
+        age_label = self.FONT.render(str(self.age), 1, WHITE)
+        x, y, width, height = self.rect
+        x = x - self.size / 2
+        y = y - self.size / 2
+        self.screen.blit(age_label, (x, y))
+
     def calc_new_pos(self):
         dx = self.velocity * math.cos(self.angle) # * dt
         dy = self.velocity * math.sin(self.angle)
