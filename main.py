@@ -4,7 +4,7 @@ File with main function
 
 import datetime
 
-from objects import Fish, Plancton
+from objects import Fish, Plancton, FISH_YEAR
 from AquariumLabels import AquariumLabels
 import pygame
 from pygame.locals import *
@@ -37,6 +37,9 @@ RADIANS_CHANGE = MAX_RADIANS_VALUE/8 # how many radians are added to random rang
 """ FISH """
 FISH_START_NUM = 10
 
+DISEASE_DEADLINE = 3000 # number of units of screen refresh
+DISEASE_PROBABILITY = 99
+
 """ /CONSTANTS """
 
 
@@ -56,6 +59,9 @@ application = None
 screen = None
 background = None
 aqLabel = None
+
+time_unit = 0
+disease_counter = 0
 
 def main():
     initialize()
@@ -122,13 +128,18 @@ def initialize():
 
 def simulation_step():
     global fish_list, fishsprite_list, eggs_list, plancton_list, plancton_add_counter, \
-            plancton_random_range_radians, application, screen, background, aqLabel
+            plancton_random_range_radians, application, screen, background, aqLabel, time_unit
+
+    time_unit += 1
+
+    check_is_disease_strikes()
 
     screen.blit(background, (0, 0))
 
-    # male and female counters
+    # male, female, ill counters
     male_counter = 0
     female_counter = 0
+    ill_fish_counter = 0
 
     # generate additional plancton every PLANCTON_TIMER
     plancton_add_counter += 1
@@ -139,6 +150,9 @@ def simulation_step():
 
     copy_list = list(fish_list)
     for fish in copy_list:
+        if fish.is_ill:
+            ill_fish_counter += 1
+
         if fish.gender == "female":
             female_counter += 1
         else:
@@ -184,7 +198,7 @@ def simulation_step():
                     male_counter += 1
 
     # update labels in Statistic
-    aqLabel.update_plancton_fish_labels(len(plancton_list), male_counter, female_counter)
+    aqLabel.update_plancton_fish_labels(math.ceil(time_unit/FISH_YEAR), len(plancton_list), male_counter, female_counter, ill_fish_counter)
 
     eggs_list = check_freshness_and_draw(eggs_list)
     plancton_list = check_freshness_and_draw(plancton_list)
@@ -193,6 +207,17 @@ def simulation_step():
     application.paint()
 
     pygame.display.flip()
+
+
+def check_is_disease_strikes():
+    global disease_counter, fish_list
+    disease_counter += 1
+    if disease_counter >= DISEASE_DEADLINE:
+        q = random.randrange(0, DISEASE_PROBABILITY)
+        if q == 0:
+            random_index = random.randrange(0, len(fish_list))
+            fish_list[random_index].catch_disease()
+            disease_counter = 0
 
 
 def check_freshness_and_draw(item_list):

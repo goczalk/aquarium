@@ -38,11 +38,13 @@ energia jest większa bądź równa ENERGY_REGENERATION_POSSIBLE rybka może zac
 ROZMNAŻANIE RYBEK
 Rybki podzielone są na dwie płci (losowanie odbywa się podczas tworzenia rybki, kolor rybki także zależy od płci).
 Z każdym ruchem dla rybki żeńskiej następuje decyzja czy rybka zostawi gdzieś ikrę. Rybka może to zrobić nie częściej niż REPRODUCTION_POSSIBLE, a decyzja jest losowana, prawdopodobieństwo na to wynosi 1/LAYING_EGG_PROBABILITY. W momencie gdy rybka zostawi ikrę, jest ona możliwa do zapłodnienia przez EGG_FRESHNESS jednostek czasu akwarium (odświeżanie ekranu).
-W momencie gdy na ikrę wpłynie samiec, podejmowana jest decyzja czy chce ją zapłodnić (prawdopodobieństwo określa: 1/LAYING_EGG_PROBABILITY).
+W momencie gdy na ikrę wpłynie samiec, podejmowana jest decyzja czy chce ją zapłodnić (prawdopodobieństwo określa: 1/(LAYING_EGG_PROBABILITY+1)).
 Jeśli ikra zostanie zapłodniona: pojawi się NEW_FISH_NUM nowych rybek w akwarium.
 Decyzja o rozmnażaniu następuje przed decyzją o regeneracji -> oznacza to, że reprodukcja jest "ważniejsza" dla rybki. Reprodukcja zabiera rybce ENERGY_REPRODUCTION_COST energii.
 
-
+UTRATA ZDROWIA
+Rybka traci HP gdy przez MAX_HUNGRY_TIME czasu jej energia wynosi poniżej MIN_ENERGY_HP_LOSE lub gdy jest chora. W momencie gdy HP = 0, rybka umiera.
+Co jakiś czas (DISEASE_DEADLINE) może pojawić się choroba z prawdopodobieństwem 1/(DISEASE_PROBABILITY+1). Jedna z rybek jest losowana i zarażana chorobą.
 
 ****
 PGU (GUI for pygame) download:

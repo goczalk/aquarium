@@ -44,8 +44,8 @@ ENERGY_CHANGE_VELOCITY = MAX_ENERGY/2
 # TODO
 # 'slow' speed: 1 move = 1 energy point?
 # 'fast' speed: 1 move = 2 energy point?
-ENERGY_POINT = 0.25
-ADDITIONAL_ENERGY_POINT = 0.25
+ENERGY_POINT = 0.025
+ADDITIONAL_ENERGY_POINT = 0.025
 MAX_HUNGRY_TIME = 0.3 * FISH_YEAR
 MIN_ENERGY_HP_LOSE = 0.1 * MAX_ENERGY
 
@@ -65,11 +65,11 @@ REGENERATION_CYCLE = 20 # number of units fish has to wait for regeneration
 ENERGY_REGENERATION_COST = 0.1 * MAX_ENERGY
 
 """ Reproduction  """
-LAYING_EGG_PROBABILITY = 1 # Probability of laying eggs is 1/LAYING_EGG_PROBABILITY
-                           # if const is 4 -> probability is 25%
-HP_REPRODUCTION_POSSIBLE = 25
-ENERGY_REPRODUCTION_POSSIBLE = 50
-REPRODUCTION_POSSIBLE = 500 # Minimum number of time units between each reproduction
+LAYING_EGG_PROBABILITY = 1 # Probability of laying eggs is 1/(LAYING_EGG_PROBABILITY+1)
+                           # if const is 3 -> probability is 25%
+HP_REPRODUCTION_POSSIBLE = 0.25 * MAX_HP
+ENERGY_REPRODUCTION_POSSIBLE = 0.5 * MAX_ENERGY
+REPRODUCTION_POSSIBLE = 300 # Minimum number of time units between each reproduction
 ENERGY_REPRODUCTION_COST = 0.2 * MAX_ENERGY
 NEW_FISH_NUM = 1
 
@@ -145,6 +145,7 @@ class Fish(pygame.sprite.Sprite):
     self.gender - "male" or "female", chosen randomly on init
     self.hp - current healt points
     self.image - loaded image
+    self.is_ill - boolean if has disease
     self.moves_fast - boolean, true when fish is moving fast
     self.rect - Rectangle object
     self.size - radius of the circle
@@ -169,7 +170,6 @@ class Fish(pygame.sprite.Sprite):
 
         #self.image, self.rect = load_png('ball.png')
         self.randomize_gender()
-        self.set_colour()
         self.randomize_size()
         xy = self._init_position()
         
@@ -179,6 +179,8 @@ class Fish(pygame.sprite.Sprite):
         self.hp = MAX_HP
         self.age = 1
         self.randomize_vector()
+        self.set_colour()
+        self.is_ill = False
         self.screen = pygame.display.get_surface()
 
         self._init_counters()
@@ -209,10 +211,16 @@ class Fish(pygame.sprite.Sprite):
             self.gender = "male"
     
     def set_colour(self):
-        if self.gender == "female":
+        if self.gender == "female" :
             self.colour = 0xcc0066
         else:
             self.colour = 0x333399
+
+    def get_colour(self):
+        if self.is_ill:
+            return BLACK
+        else:
+            return self.colour
 
     def randomize_size(self):
         self.size = random.randrange(MIN_FISH_SIZE, MAX_FISH_SIZE+1)
@@ -227,12 +235,12 @@ class Fish(pygame.sprite.Sprite):
         # should the speed be random? 
         # self.velocity = random.randrange(3, 6)
         if self.energy >= ENERGY_CHANGE_VELOCITY:
-            self.velocity = 3
+            self.velocity = 2
             self.moves_fast = True
         elif self.energy < ENERGY_CHANGE_VELOCITY:
-            self.velocity = 2
-            if self.energy <= MIN_ENERGY:
-                self.velocity = 1
+            self.velocity = 1
+            # if self.energy <= MIN_ENERGY:
+            #     self.velocity = 1
             self.moves_fast = False
 
     def change_speed_or_regenerate(self):
@@ -253,7 +261,7 @@ class Fish(pygame.sprite.Sprite):
         self.update()
         self.draw_energy_indicators()
         self.draw_hp_indicators()
-        pygame.draw.circle(self.screen, self.colour, (self.rect.x, self.rect.y), self.size)
+        pygame.draw.circle(self.screen, self.get_colour(), (self.rect.x, self.rect.y), self.size)
         self.draw_age()
 
     def update(self):
@@ -304,7 +312,7 @@ class Fish(pygame.sprite.Sprite):
         """
         Hp is decreasing when fish is hungry (does not have enough energy) or/and when it is sick
         """
-        if self.energy < MIN_ENERGY_HP_LOSE:
+        if self.energy < MIN_ENERGY_HP_LOSE or self.is_ill:
             self.hp_time_counter += 1
             if self.hp_time_counter >= MAX_HUNGRY_TIME:
                 self.hp -= 1
@@ -389,7 +397,7 @@ class Fish(pygame.sprite.Sprite):
 
     def draw_energy_indicators(self):
         # render text
-        energy_num_label = self.FONT.render("E" + str(self.energy), 1, BLACK)
+        energy_num_label = self.FONT.render("E" + str(math.floor(self.energy)), 1, BLACK)
         x, y, width, height = self.rect
         x = x - self.size
         y = y - self.size
@@ -458,4 +466,7 @@ class Fish(pygame.sprite.Sprite):
         self.energy += MULTIPLIER_FOR_FOOD*value
         if self.energy > MAX_ENERGY:
             self.energy = MAX_ENERGY
+
+    def catch_disease(self):
+        self.is_ill = True
     
