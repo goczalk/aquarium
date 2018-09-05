@@ -12,9 +12,6 @@ Z tym że wtedy mógłby pojawić się problem, że wszystkożerne zeżrą te ro
 symulacja :) Z drugiej strony jeśli plankton będzie pojawiał się nieregularnie to może spowodować, że taka sytuacja, że będzie brakować żarcia
 pojawi się tylko co jakiś czas.
 
-
-6. WAŻNE: ryby zasadniczo są długowieczne - o ile ich coś nie zeżre to żyją dopóki nie umrą z głodu czy choróbska.
-
 * pyt.6 więc tak jak mówiłam, starzenie się można zostawić w ramach zmniejszenia siły czy szybkości rybki :D
 
 7. Zdecydowanie dla małych rybek przydałyby się kryjówki.
@@ -32,8 +29,6 @@ realistyczną symulację akwarium to wypadałoby to dodać, jednocześnie w praw
 11. Może być taka sytuacja, że ryba niedrapieżna (podział drapieżne <-> niedrapieżne == roślnożerne <-> wszystkożerne) jest duża, a drapieżna
 mała i wtedy ta drapieżna nie jest zagrożeniem dla dużej, ale jest zagrożeniem dla narybku.
 
-12. Można dodać choroby i zakażenia.
-
 13. Ryby raczej rozpoznają się, która jest drapieżna, a która niekoniecznie: czyli nie muszą uciekać przed każdą większą od siebie.
 Chociaż system dostrzegania szybciej rybki większej wydaje mi się, że może zostać.
 
@@ -45,12 +40,6 @@ Chociaż system dostrzegania szybciej rybki większej wydaje mi się, że może 
 === TODO ===
 -albo można uzależnić szybkość regeneracji energii od poziomu najedzenia oraz wieku
 -im starsza rybka tym krócej może uciekać
-- rodzaj rybki definiuje jej minimalny i maksymalny rozmiar do którego może dorosnąć. przy tworzeniu rybki dla każdego osobnika są losowane jego osobnicze atrybuty (na przyklad gatunek małej rybki może być rozmiary od 2 do 6, a TEN osobnik może być od 2 (więc z taką wielkością zaczyna) do 5).
--podstawą jest to, że zawsze rybka większa może zjeść mniejszą, czyli nie jest tak, że rybki małe nie mogą zjadać innych małych rybek, mogą jeśli będą odpowiednio duże.-
--jeśli rybka przekroczy jakąś z góry ustaloną wielkość to zjadanie planktonu nie daje jej więcej energii.
--Gdy rybka robi się coraz większa, potrzebuje coraz więcej pożywienia, dlatego ilość energii jaką daje jej zjedzenie danej rybki/planktonu zależy od jej wielkości. Przy pewnym rozmiarze rybki nie będzie jej się opłacało jeść planktonu. [Czyli robimy ze wszystkich drapieżników - nie wiem czy to dobrze :D]
 -podczas ruchu zużywana jest energia, a ile jest jej zużywane określa rozmiar rybki. Rybki mniejsze zużyją mniej energii na ruch, rybki większe zużywają jej więcej.
 -POLE WIDZENIA zdecydowałam, że będzie takie samo dla każdej rybki, ale jak wiadomo większą rybkę lepiej widać z dużej odległości niż mniejszą.
 -dlatego zdecydowałam, że podczas wyliczania tablicy z danymi "jak daleko, który obiekt jest ode mnie" będę brała pod uwagę wielkość tego obiektu więc ROZMIAR (plankton na przykład miały rozmiar 1), i w momencie gdy rybka będzie w odległości 1 od niego to może go zobaczyć , jeśli rybka ma rozmiar 4, jest na współrzędnej 10, to żeby ją zobaczyć inna rybka musi znaleźć się na współrzędnej 6 bądź 14. (czyli w odległości 4 od niej).
--HP dla rybek losowane? Energia też?
--rybki nigdy nie umrą jeśli będą miały żarcia -> ze starości!

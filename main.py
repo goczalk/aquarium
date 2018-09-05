@@ -32,7 +32,8 @@ PLANCTON_START_NUM = 50
 PLANCTON_TIMER = 360
 PLANCTON_MAX_TO_ADD = 80
 MAX_RADIANS_VALUE = 180 * 0.017
-RADIANS_CHANGE = MAX_RADIANS_VALUE/8 # how many radians are added to random range max to calculate sinus of how much plancton will be produced. bigger the division, slower the sinusoidal func will go
+# how many radians are added to random range max to calculate sinus of how much plancton will be produced. bigger the division, slower the sinusoidal func will go
+RADIANS_CHANGE = MAX_RADIANS_VALUE/8
 
 """ FISH """
 FISH_START_NUM = 10
@@ -63,18 +64,14 @@ aqLabel = None
 time_unit = 0
 disease_counter = 0
 
+
 def main():
     initialize()
-
-    # Initialise clock
-    # clock = pygame.time.Clock()
 
     last_update = time.clock()
     accumulator = 0.0
     done = False
     while not done:
-        # Make sure game doesn't run at more than 60 frames per second
-        # clock.tick(60)
 
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -86,13 +83,13 @@ def main():
 
         since_last_update = time.clock() - last_update
         last_update = time.clock()
-        accumulator += since_last_update
+        accumulator += since_last_update * SIMULATION_SPEED
         accumulator = min(MAX_ACCUMULATED_TIME, accumulator)
 
-        while accumulator > TIME_STEP :
-            for _ in range(SIMULATION_SPEED):
-                simulation_step()
-                accumulator -= TIME_STEP
+        while accumulator > TIME_STEP:
+            simulation_step()
+            accumulator -= TIME_STEP
+
 
 def initialize():
     pygame.init()
