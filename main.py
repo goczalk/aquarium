@@ -2,8 +2,6 @@
 File with main function
 """
 
-import datetime
-
 from objects import Fish, Plancton, FISH_YEAR
 from AquariumLabels import AquariumLabels
 import pygame
@@ -14,6 +12,8 @@ import random
 import math
 import time
 
+from speed import Speed
+
 """ CONSTANTS """
 
 """ SIMMULATION TIME """
@@ -21,7 +21,6 @@ import time
 TIME_STEP = 0.03
 # max 1FPS
 MAX_ACCUMULATED_TIME = 1.0
-SIMULATION_SPEED = 1
 
 """ SCREEN """
 SCREEN_WIDTH = 1000
@@ -83,7 +82,7 @@ def main():
 
         since_last_update = time.clock() - last_update
         last_update = time.clock()
-        accumulator += since_last_update * SIMULATION_SPEED
+        accumulator += since_last_update * Speed.get_sim_speed()
         accumulator = min(MAX_ACCUMULATED_TIME, accumulator)
 
         while accumulator > TIME_STEP:
@@ -247,6 +246,5 @@ def generate_additional_plancton(plancton_add_counter, plancton_list, plancton_r
         for _ in range(number_of_plancton_to_add):
             plancton_list.append(Plancton())
     return plancton_add_counter, plancton_list, plancton_random_range_radians
-
 
 if __name__ == '__main__': main()

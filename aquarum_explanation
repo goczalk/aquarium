@@ -1,5 +1,8 @@
 === JAK DZIAŁA AKWARIUM ===
 
+PRĘDKOŚĆ SYMULACJI
+Prędkość symulacji można sterować za pomocą suwaka, dostępne prędkości to od 10 razy wolniej do 10 razy szybciej, przy czym przy prędkościach "-1, 0, 1" prędkość symulacji jest taka sama.
+
 PLANKTON
 Początkową wartość planktonu określa PLANCTON_START_NUM. Planktonu przybywa raz na PLANCTON_TIMER o wartość wyliczoną z funkcji sinusa.
 Ilość dodawanego planktonu to % z PLANCTON_MAX_TO_ADD. % ten to wartość funkcji sinus, wyliczoną z argumentu, który jest losową wartością. Wartości spośród, których argument jest losowany są zwiększane co PLANCTON_TIMER o RADIANS_CHANGE.

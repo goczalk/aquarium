@@ -231,9 +231,6 @@ class Fish(pygame.sprite.Sprite):
         self.change_speed()
         
     def change_speed(self):
-        # TODO
-        # should the speed be random? 
-        # self.velocity = random.randrange(3, 6)
         if self.energy >= ENERGY_CHANGE_VELOCITY:
             self.velocity = 2
             self.moves_fast = True
