@@ -307,12 +307,17 @@ class Fish(pygame.sprite.Sprite):
 
     def decrease_hp(self):
         """
-        Hp is decreasing when fish is hungry (does not have enough energy) or/and when it is sick
+        Hp is decreasing when fish is hungry (does not have enough energy) or is sick for particular amount of time.
+        It loses hp, one when hungry and one when sick. If both are True, it loses double hp.
         """
         if self.energy < MIN_ENERGY_HP_LOSE or self.is_ill:
             self.hp_time_counter += 1
             if self.hp_time_counter >= MAX_HUNGRY_TIME:
-                self.hp -= 1
+                if self.energy < MIN_ENERGY_HP_LOSE:
+                    self.hp -= 1
+                if self.is_ill:
+                    self.hp -= 1
+
                 self.hp_time_counter = 0
         else:
             self.hp_time_counter = 0
