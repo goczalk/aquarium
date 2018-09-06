@@ -17,6 +17,7 @@ Podczas tworzenia rybki:
 -losowana jest pozycja początkowa
 -przydzielane są punkty energii oraz zdrowia (health points - HP), odpowiednio MAX_ENERGY oraz MAX_HP
 -losowany jest wektor ruchu
+-liczby związane z rybką: E (energia), HP (punkty zdrowia), na środku rybki jest jej wiek w FISH_YEAR
 
 JEDZENIE/ZDOBYWANIE ENERGII
 Każdorazowo jeśli rybka wpłynie na plankton otrzymuje ilość energii odpowiadająca rozmiarowi planktonu przemnożonego przez MULTIPLIER_FOR_FOOD. Oczywiście rybka nie może mieć energii większej niż MAX_ENERGY.

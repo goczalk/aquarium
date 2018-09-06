@@ -60,7 +60,8 @@ screen = None
 background = None
 aqLabel = None
 
-time_unit = 0
+time_unit_counter = 0
+fish_year_passed = 1
 disease_counter = 0
 
 
@@ -124,9 +125,10 @@ def initialize():
 
 def simulation_step():
     global fish_list, fishsprite_list, eggs_list, plancton_list, plancton_add_counter, \
-            plancton_random_range_radians, application, screen, background, aqLabel, time_unit
+            plancton_random_range_radians, application, screen, background, aqLabel, \
+            time_unit_counter, fish_year_passed
 
-    time_unit += 1
+    time_unit_counter += 1
 
     check_is_disease_strikes()
 
@@ -144,8 +146,11 @@ def simulation_step():
     plancton_random_range_radians = generate_additional_plancton(plancton_add_counter, plancton_list,
                                                                  plancton_random_range_radians)
 
+
     copy_list = list(fish_list)
-    for fish in copy_list:
+    # for fish in copy_list:
+    for i, fish in enumerate(copy_list):
+
         if fish.is_ill:
             ill_fish_counter += 1
 
@@ -154,7 +159,6 @@ def simulation_step():
         else:
             male_counter += 1
 
-        fish.update()
         egg = fish.lay_eggs()
         eggs_list += [egg] if egg is not None else []
         fish.draw()
@@ -167,18 +171,20 @@ def simulation_step():
             fish.increase_energy((plancton_list.pop(plancton_index)).radius)
 
         # check if bumped into other fish
-
         # uwazaj na przypadek samozjadania gdy rybka rosnie
-        fish_index = fish.rect.collidelist(fish_list)
-        if fish_index != -1:
-            if fish.size > fish_list[fish_index].size:
-                eaten_fish = fish_list.pop(fish_index)
-                # remove from list and add as much energy as big the fish was
-                fish.increase_energy(eaten_fish.size)
-                if eaten_fish.gender == "female":
-                    female_counter -= 1
-                else:
-                    male_counter -= 1
+        # fish_index = fish.rect.collidelist(fish_list)
+        # if fish_index != -1:
+        #     if fish.size > fish_list[fish_index].size:
+        #         eaten_fish = fish_list.pop(fish_index)
+        #         # remove from list and add as much energy as big the fish was
+        #         fish.increase_energy(eaten_fish.size)
+        #         if eaten_fish.gender == "female":
+        #             female_counter -= 1
+        #         else:
+        #             male_counter -= 1
+
+        # TODO zjedzenie chorej rybki powoduje chorobę -> nie tylko przebywanie!
+        # check_if_bumped_into_ill_fish(fish, fish_list)
 
         # check if bumped into egg
         egg_index = fish.rect.collidelist([egg.rect for egg in eggs_list])
@@ -193,8 +199,12 @@ def simulation_step():
                 else:
                     male_counter += 1
 
+    if time_unit_counter >= FISH_YEAR:
+        fish_year_passed += 1
+        time_unit_counter = 0
+        
     # update labels in Statistic
-    aqLabel.update_plancton_fish_labels(math.ceil(time_unit/FISH_YEAR), len(plancton_list), male_counter, female_counter, ill_fish_counter)
+    aqLabel.update_plancton_fish_labels(fish_year_passed, len(plancton_list), male_counter, female_counter, ill_fish_counter)
 
     eggs_list = check_freshness_and_draw(eggs_list)
     plancton_list = check_freshness_and_draw(plancton_list)
@@ -203,6 +213,15 @@ def simulation_step():
     application.paint()
 
     pygame.display.flip()
+
+
+def check_if_bumped_into_ill_fish(fish, fish_list):
+    # check if bumped into ill fish and caught disease
+    fish_index = fish.rect.collidelist(fish_list)
+    if fish_index != -1:
+        fish_bumped_into = fish_list[fish_index]
+        if fish_bumped_into.is_ill:
+            fish.catch_disease()
 
 
 def check_is_disease_strikes():

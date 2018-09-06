@@ -31,7 +31,7 @@ EGG_FRESHNESS = 500
 MIN_FISH_SIZE = 13
 MAX_FISH_SIZE = 18
 
-FISH_YEAR = 200 # Number of units (frames) which has to pass to increase age
+FISH_YEAR = 200  # Number of units (frames) which has to pass to increase age
 
 """ Enegry"""
 MAX_ENERGY = 100
@@ -322,12 +322,11 @@ class Fish(pygame.sprite.Sprite):
         else:
             self.hp_time_counter = 0
 
-
     def aging(self):
         """
         Age is increasing as fish is aging (time is passing).
         One frame, so one update, is one unit of time.
-        Slower and faster aging according to energy.
+        Slower and faster aging according to hp.
         If in row HP is below/over HP_FASTER_AGING/HP_SLOWER_AGING
         health is decreasing 10% faster or slower
         It can be -/+ only 3 in a row times as you can't inifnitly slower/faster aging
@@ -339,7 +338,7 @@ class Fish(pygame.sprite.Sprite):
         else:
             self.slower_aging_counter = 0
             self.adding_additional_fish_year_counter_slower = 0
-            
+
         if self.energy <= HP_FASTER_AGING:
             self.faster_aging_counter += 1
         else:
@@ -353,13 +352,13 @@ class Fish(pygame.sprite.Sprite):
                 self.age_time_counter = self.age_time_counter - ADDITIONAL_FISH_YEAR
                 self.adding_additional_fish_year_counter_slower += 1
                 self.slower_aging_counter = 0
-           
+
         if self.adding_additional_fish_year_counter_faster <= 3:
             if self.faster_aging_counter >= SLOWER_FASTER_AGING_COUNTER:
                 self.age_time_counter = self.age_time_counter + ADDITIONAL_FISH_YEAR
                 self.adding_additional_fish_year_counter_faster += 1
                 self.faster_aging_counter = 0
-            
+
         if self.age_time_counter >= FISH_YEAR:
             self.age += 1
             self.age_time_counter = 0
@@ -465,7 +464,7 @@ class Fish(pygame.sprite.Sprite):
         return self.rect.move(dx, dy)
     
     def increase_energy(self, value):
-        self.energy += MULTIPLIER_FOR_FOOD*value
+        self.energy += MULTIPLIER_FOR_FOOD * value
         if self.energy > MAX_ENERGY:
             self.energy = MAX_ENERGY
 
