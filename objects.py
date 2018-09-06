@@ -168,7 +168,7 @@ class Fish(pygame.sprite.Sprite):
         # initilize font
         self.FONT = pygame.font.SysFont("monospace", 15)
 
-        #self.image, self.rect = load_png('ball.png')
+        # self.image, self.rect = load_png('ball.png')
         self.randomize_gender()
         self.randomize_size()
         xy = self._init_position()
@@ -178,9 +178,12 @@ class Fish(pygame.sprite.Sprite):
         self.energy = MAX_ENERGY
         self.hp = MAX_HP
         self.age = 1
-        self.randomize_vector()
         self.set_colour()
         self.is_ill = False
+
+        self.choose_point_to_chase()
+        #inna nazwa niz vetor?
+        self.randomize_vector()
         self.screen = pygame.display.get_surface()
 
         self._init_counters()
@@ -198,10 +201,12 @@ class Fish(pygame.sprite.Sprite):
         self.reproduction_counter = 0
         
     def _init_position(self):
-        x = random.randrange(SCREEN_WIDTH - self.size)
-        y = random.randrange(SCREEN_HEIGHT - self.size)
+        self.x = 300
+        self.y = 300
+        # self.x = random.randrange(SCREEN_WIDTH - self.size)
+        # self.y = random.randrange(SCREEN_HEIGHT - self.size)
         #self.rect = self.rect.move(x, y)
-        return (x, y)
+        return (self.x, self.y)
 
     def randomize_gender(self):
         x = random.randrange(0, 2)
@@ -225,9 +230,40 @@ class Fish(pygame.sprite.Sprite):
     def randomize_size(self):
         self.size = random.randrange(MIN_FISH_SIZE, MAX_FISH_SIZE+1)
 
+    def fish_on_chasing_point(self):
+        if abs(self.x - self.point_x) <= 5 and abs(self.y - self.point_y) <= 5:
+            return True
+        else:
+            return False
+
+    #narazie losowe punkty!
+    def choose_point_to_chase(self):
+        self.point_x = random.randrange(SCREEN_WIDTH - self.size)
+        self.point_y = random.randrange(SCREEN_HEIGHT - self.size)
+        # self.point_x = 100
+        # self.point_y = 100
+
+        #????
+        dx = self.point_x - self.x
+        dy = self.point_y - self.y
+        #
+        # if abs(dx) < 5 or dx == 0:
+        #     dx = 1
+        # if abs(dy) < 5:
+        #     dy = 0
+
+        print("dx" + str(dx) + "; dy: " + str(dy))
+        print("point x" + str(self.point_x) + "; point y: " + str(self.point_y))
+        print("x" + str(self.x) + "; y: " + str(self.y))
+
+        self.angle_difference = math.atan2(dy, dx)
+
+        print("diff:" + str(self.angle_difference))
+
     def randomize_vector(self):
         # random angle
-        self.angle = random.uniform(0, 2 * math.pi)
+        # self.angle = random.uniform(0, 2 * math.p3,14/6i)
+        self.angle = 0
         self.change_speed()
         
     def change_speed(self):
@@ -261,33 +297,44 @@ class Fish(pygame.sprite.Sprite):
         pygame.draw.circle(self.screen, self.get_colour(), (self.rect.x, self.rect.y), self.size)
         self.draw_age()
 
+        # narysuj punkt!
+        self.xy_point = (self.point_x, self.point_y)
+        pygame.draw.circle(self.screen, 0x1112255, self.xy_point, 10)
+
     def update(self):
         """
         Updates velocity, energy, health. Draws energy and healt indicator.
         """
         # check if dead
         if self.hp > 0:
+
+            if self.fish_on_chasing_point():
+                print("HAAAAALO")
+                self.choose_point_to_chase()
+
+            self.change_angle_to_chase()
             self.rect = self.calc_new_pos()
-            x, y, _, _= self.rect
+            self.x = self.rect.x
+            self.y = self.rect.y
 
             # TODO
             # stuck on the edges horizontal 
             # TODO
             # refactor code
-            if x > (1000 - self.rect.width):
-                x = 1000 - self.rect.width
+            if self.x > (1000 - self.rect.width):
+                self.x = 1000 - self.rect.width
                 self.randomize_vector()
-            elif x < 0:
-                x = 0
+            elif self.x < 0:
+                self.x = 0
                 self.randomize_vector()
-            if y > (500 - self.rect.height):
-                y = 500 - self.rect.height
+            if self.y > (500 - self.rect.height):
+                self.y = 500 - self.rect.height
                 self.randomize_vector()
-            elif y < 0:
-                y = 0
+            elif self.y < 0:
+                self.y = 0
                 self.randomize_vector()
-            self.rect.x = x
-            self.rect.y = y
+            self.rect.x = self.x
+            self.rect.y = self.y
             
             self.decrease_energy()
             self.change_speed_or_regenerate()
@@ -362,12 +409,12 @@ class Fish(pygame.sprite.Sprite):
         if self.age_time_counter >= FISH_YEAR:
             self.age += 1
             self.age_time_counter = 0
-    
+
     def lay_eggs(self):
         """
         Returns egg object if laid or None.
         Probability of laying happening: LAYING_EGG_PROBABILITY
-        """        
+        """
         self.reproduction_counter += 1
         if self.gender == "female":
             if(self.reproduction_counter >= REPRODUCTION_POSSIBLE):
@@ -414,10 +461,10 @@ class Fish(pygame.sprite.Sprite):
         if y <= height/0.8:
             y_label = y + height*1.8
             y_rect = y + height*2.4
-            
+
         self.screen.blit(energy_num_label, (x, y_label))
         pygame.draw.rect(self.screen, (Rgb, 200, 0), (x, y_rect, label_width, LABEL_HEIGHT))
-        
+
     def draw_hp_indicators(self):
         # render text
         hp_num_label = self.FONT.render("HP" + str(self.hp), 1, BLACK)
@@ -447,6 +494,32 @@ class Fish(pygame.sprite.Sprite):
         y = y - self.size / 2
         self.screen.blit(age_label, (x, y))
 
+    def change_angle_to_chase(self):
+        # dx = self.point_x - self.x
+        # dy = self.point_y - self.y
+        #
+        # if abs(dx) < 5 or dx == 0:
+        #     dx = 1
+        # if abs(dy) < 5:
+        #     dy = 0
+        # division = dy/dx
+        #
+        # angle_difference = math.asin(division)
+        # # 0.1??? const???
+        # print ("moj" + str(self.angle))
+        # print("diff:" + str(self.angle_difference))
+
+        # when angle_difference will be < 0, negative value will be added => decrease angle
+
+        # if abs(self.angle - self.angle_difference) > 0.001:
+        if self.age_time_counter >= FISH_YEAR/3:
+            self.angle = self.angle_difference
+            # print("tu")
+            # print ("moj" + str(self.angle))
+            # print("diff:" + str(self.angle_difference))
+            # self.angle += 0.01 * self.angle_difference
+            # self.angle /= 2 * math.pi
+
     def calc_new_pos(self):
         dx = self.velocity * math.cos(self.angle) # * dt
         dy = self.velocity * math.sin(self.angle)
@@ -460,7 +533,7 @@ class Fish(pygame.sprite.Sprite):
             dy = math.ceil(dy)
         elif -1 < dy < 0:
             dy = math.floor(dy)
-        
+
         return self.rect.move(dx, dy)
     
     def increase_energy(self, value):
@@ -470,4 +543,3 @@ class Fish(pygame.sprite.Sprite):
 
     def catch_disease(self):
         self.is_ill = True
-    

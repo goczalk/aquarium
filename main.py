@@ -35,7 +35,7 @@ MAX_RADIANS_VALUE = 180 * 0.017
 RADIANS_CHANGE = MAX_RADIANS_VALUE/8
 
 """ FISH """
-FISH_START_NUM = 10
+FISH_START_NUM = 1
 
 DISEASE_DEADLINE = 3000 # number of units of screen refresh
 DISEASE_PROBABILITY = 99
@@ -202,7 +202,7 @@ def simulation_step():
     if time_unit_counter >= FISH_YEAR:
         fish_year_passed += 1
         time_unit_counter = 0
-        
+
     # update labels in Statistic
     aqLabel.update_plancton_fish_labels(fish_year_passed, len(plancton_list), male_counter, female_counter, ill_fish_counter)
 
@@ -233,7 +233,6 @@ def check_is_disease_strikes():
             random_index = random.randrange(0, len(fish_list))
             fish_list[random_index].catch_disease()
             disease_counter = 0
-
 
 def check_freshness_and_draw(item_list):
     for item in item_list:
