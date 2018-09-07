@@ -150,6 +150,10 @@ def simulation_step():
     copy_list = list(fish_list)
     # for fish in copy_list:
     for i, fish in enumerate(copy_list):
+        # if(i == 0):
+        #     fish.angle = 30 * 3.14 / 180
+        # else:
+        #     fish.angle = 45 * 3.14 / 180
 
         if fish.is_ill:
             ill_fish_counter += 1
@@ -175,7 +179,7 @@ def simulation_step():
         # fish_index = fish.rect.collidelist(fish_list)
         # if fish_index != -1:
         #     if fish.size > fish_list[fish_index].size:
-        #         eaten_fish = fish_list.pop(fish_index)
+        #         eaten_fish     = fish_list.pop(fish_index)
         #         # remove from list and add as much energy as big the fish was
         #         fish.increase_energy(eaten_fish.size)
         #         if eaten_fish.gender == "female":

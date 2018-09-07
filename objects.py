@@ -5,7 +5,7 @@ File with classes of creatures
 import random
 import math
 import pygame
-from render import load_png
+# from render import load_png
 
 
 """ CONSTANTS """
@@ -155,7 +155,10 @@ class Fish(pygame.sprite.Sprite):
     # counters
     self.adding_additional_fish_year_counter_faster- counter to count that additional years to fish year are only added 3 times in a row
     self.adding_additional_fish_year_counter_slower- counter to count that additional years to fish year are only substracted 3 times in a row
-    self.faster_aging_counter - counter of energies in row for faster aging 
+    self.age_time_counter - counter to accumulate unit of passed time
+    self.dx_accumulator - accumulator needed when fish is moving in very slow angle
+    self.dy_accumulator - accumulator needed when fish is moving in very slow angle
+    self.faster_aging_counter - counter of energies in row for faster aging
     self.hp_time_counter - counter of frames for fish aging
     self.reproduction_counter - counter of frames until last reproduction (laying or fertilizing)
     self.regeneration_counter - counter of frames when fish is regenerating
@@ -199,7 +202,9 @@ class Fish(pygame.sprite.Sprite):
         self.hp_time_counter = 0
         self.regeneration_counter = 0
         self.reproduction_counter = 0
-        
+        self.dx_accumulator = 0
+        self.dy_accumulator = 0
+
     def _init_position(self):
         self.x = 300
         self.y = 300
@@ -261,9 +266,10 @@ class Fish(pygame.sprite.Sprite):
         print("diff:" + str(self.angle_difference))
 
     def randomize_vector(self):
+        # angle is same as in cartesian, +30deg (byt in radians) rotate to te left from OX, -30deg/330 rotates right
         # random angle
         # self.angle = random.uniform(0, 2 * math.p3,14/6i)
-        self.angle = 0
+        self.angle = 10 * 3.14 / 180
         self.change_speed()
         
     def change_speed(self):
@@ -313,9 +319,7 @@ class Fish(pygame.sprite.Sprite):
                 self.choose_point_to_chase()
 
             self.change_angle_to_chase()
-            self.rect = self.calc_new_pos()
-            self.x = self.rect.x
-            self.y = self.rect.y
+            self.calc_new_pos()
 
             # TODO
             # stuck on the edges horizontal 
@@ -502,7 +506,7 @@ class Fish(pygame.sprite.Sprite):
         #     dx = 1
         # if abs(dy) < 5:
         #     dy = 0
-        # division = dy/dx
+        # division = dy/dxmath.cos(self.angle
         #
         # angle_difference = math.asin(division)
         # # 0.1??? const???
@@ -521,21 +525,35 @@ class Fish(pygame.sprite.Sprite):
             # self.angle /= 2 * math.pi
 
     def calc_new_pos(self):
-        dx = self.velocity * math.cos(self.angle) # * dt
-        dy = self.velocity * math.sin(self.angle)
-        
-        # if velocity == 0, dx and dy could be == 0 which would stop the fish
-        if 0 < dx < 1:
-            dx = math.ceil(dx)
-        elif -1 < dx < 0:
-            dx = math.floor(dx)
-        if 0 < dy < 1:
-            dy = math.ceil(dy)
-        elif -1 < dy < 0:
-            dy = math.floor(dy)
+        dx = self.velocity * round(math.cos(self.angle), 3)  # * dt
+        dy = -self.velocity * round(math.sin(self.angle), 3)
 
-        return self.rect.move(dx, dy)
-    
+        # accumulators will always be positive
+        # get piece after decimal point
+        self.dx_accumulator += abs(dx) % 1
+        self.dy_accumulator += abs(dy) % 1
+
+        if self.dx_accumulator >= 1:
+            # depending on actucal sing of dx, add or subtract
+            to_add = math.floor(self.dx_accumulator)
+            if dx > 0:
+                dx += to_add
+            else:
+                dx -= to_add
+            self.dx_accumulator -= 1
+
+        if self.dy_accumulator >= 1:
+            to_add = math.floor(self.dy_accumulator)
+            if dy > 0:
+                dy += to_add
+            else:
+                dy -= to_add
+            self.dy_accumulator -= 1
+
+        self.rect = self.rect.move(dx, dy)
+        self.x = self.rect.x
+        self.y = self.rect.y
+
     def increase_energy(self, value):
         self.energy += MULTIPLIER_FOR_FOOD * value
         if self.energy > MAX_ENERGY:
