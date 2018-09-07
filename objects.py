@@ -139,6 +139,7 @@ class Egg:
 class Fish(pygame.sprite.Sprite):
     """
     self.angle - int for angle
+    self.angle_difference - difference counted to chased point
     self.colour - colour of the fish depending on its gender
     self.energy - current energy
     self.FONT - font for energy label
@@ -151,6 +152,7 @@ class Fish(pygame.sprite.Sprite):
     self.size - radius of the circle
     self.screen - screen to display on
     self.velocity - int for velocity
+    self.x, self.y - current posistion
     
     # counters
     self.adding_additional_fish_year_counter_faster- counter to count that additional years to fish year are only added 3 times in a row
@@ -184,14 +186,11 @@ class Fish(pygame.sprite.Sprite):
         self.set_colour()
         self.is_ill = False
 
+        self.init_vector()
         self.choose_point_to_chase()
-        #inna nazwa niz vetor?
-        self.randomize_vector()
         self.screen = pygame.display.get_surface()
 
         self._init_counters()
-        # self.rect = pygame.draw.circle(screen, 663399, (10, 10), 15)
-        # self.area = screen.get_rect()
 
     def _init_counters(self):
         self.age_time_counter = 0
@@ -206,11 +205,8 @@ class Fish(pygame.sprite.Sprite):
         self.dy_accumulator = 0
 
     def _init_position(self):
-        self.x = 300
-        self.y = 300
-        # self.x = random.randrange(SCREEN_WIDTH - self.size)
-        # self.y = random.randrange(SCREEN_HEIGHT - self.size)
-        #self.rect = self.rect.move(x, y)
+        self.x = random.randrange(SCREEN_WIDTH - self.size)
+        self.y = random.randrange(SCREEN_HEIGHT - self.size)
         return (self.x, self.y)
 
     def randomize_gender(self):
@@ -219,7 +215,7 @@ class Fish(pygame.sprite.Sprite):
             self.gender = "female"
         else:
             self.gender = "male"
-    
+
     def set_colour(self):
         if self.gender == "female" :
             self.colour = 0xcc0066
@@ -236,42 +232,31 @@ class Fish(pygame.sprite.Sprite):
         self.size = random.randrange(MIN_FISH_SIZE, MAX_FISH_SIZE+1)
 
     def fish_on_chasing_point(self):
-        if abs(self.x - self.point_x) <= 5 and abs(self.y - self.point_y) <= 5:
+        if abs(self.x - self.point_x) <= 10 and abs(self.y - self.point_y) <= 10:
             return True
         else:
             return False
 
-    #narazie losowe punkty!
+    #TODO
+    # narazie losowe punkty!
     def choose_point_to_chase(self):
         self.point_x = random.randrange(SCREEN_WIDTH - self.size)
         self.point_y = random.randrange(SCREEN_HEIGHT - self.size)
-        # self.point_x = 100
-        # self.point_y = 100
 
-        #????
+    def calculate_angle_diff(self):
         dx = self.point_x - self.x
-        dy = self.point_y - self.y
-        #
-        # if abs(dx) < 5 or dx == 0:
-        #     dx = 1
-        # if abs(dy) < 5:
-        #     dy = 0
-
-        print("dx" + str(dx) + "; dy: " + str(dy))
-        print("point x" + str(self.point_x) + "; point y: " + str(self.point_y))
-        print("x" + str(self.x) + "; y: " + str(self.y))
+        # zeby zamienic na kartezjanski uklad -> zeby odpowiadal katowi
+        dy = (self.point_y - self.y) * -1
 
         self.angle_difference = math.atan2(dy, dx)
+        if self.angle_difference < 0:
+            self.angle_difference += 2 * math.pi
 
-        print("diff:" + str(self.angle_difference))
-
-    def randomize_vector(self):
+    def init_vector(self):
         # angle is same as in cartesian, +30deg (byt in radians) rotate to te left from OX, -30deg/330 rotates right
-        # random angle
-        # self.angle = random.uniform(0, 2 * math.p3,14/6i)
-        self.angle = 10 * 3.14 / 180
+        self.angle = random.uniform(0, 2 * math.pi)
         self.change_speed()
-        
+
     def change_speed(self):
         if self.energy >= ENERGY_CHANGE_VELOCITY:
             self.velocity = 2
@@ -306,6 +291,7 @@ class Fish(pygame.sprite.Sprite):
         # narysuj punkt!
         self.xy_point = (self.point_x, self.point_y)
         pygame.draw.circle(self.screen, 0x1112255, self.xy_point, 10)
+        # self.area = screen.get_rect()
 
     def update(self):
         """
@@ -315,7 +301,6 @@ class Fish(pygame.sprite.Sprite):
         if self.hp > 0:
 
             if self.fish_on_chasing_point():
-                print("HAAAAALO")
                 self.choose_point_to_chase()
 
             self.change_angle_to_chase()
@@ -327,16 +312,16 @@ class Fish(pygame.sprite.Sprite):
             # refactor code
             if self.x > (1000 - self.rect.width):
                 self.x = 1000 - self.rect.width
-                self.randomize_vector()
+                self.init_vector()
             elif self.x < 0:
                 self.x = 0
-                self.randomize_vector()
+                self.init_vector()
             if self.y > (500 - self.rect.height):
                 self.y = 500 - self.rect.height
-                self.randomize_vector()
+                self.init_vector()
             elif self.y < 0:
                 self.y = 0
-                self.randomize_vector()
+                self.init_vector()
             self.rect.x = self.x
             self.rect.y = self.y
             
@@ -499,30 +484,9 @@ class Fish(pygame.sprite.Sprite):
         self.screen.blit(age_label, (x, y))
 
     def change_angle_to_chase(self):
-        # dx = self.point_x - self.x
-        # dy = self.point_y - self.y
-        #
-        # if abs(dx) < 5 or dx == 0:
-        #     dx = 1
-        # if abs(dy) < 5:
-        #     dy = 0
-        # division = dy/dxmath.cos(self.angle
-        #
-        # angle_difference = math.asin(division)
-        # # 0.1??? const???
-        # print ("moj" + str(self.angle))
-        # print("diff:" + str(self.angle_difference))
-
-        # when angle_difference will be < 0, negative value will be added => decrease angle
-
-        # if abs(self.angle - self.angle_difference) > 0.001:
-        if self.age_time_counter >= FISH_YEAR/3:
-            self.angle = self.angle_difference
-            # print("tu")
-            # print ("moj" + str(self.angle))
-            # print("diff:" + str(self.angle_difference))
-            # self.angle += 0.01 * self.angle_difference
-            # self.angle /= 2 * math.pi
+        self.calculate_angle_diff()
+        if self.angle < self.angle_difference:
+            self.angle += 0.007 * self.angle_difference
 
     def calc_new_pos(self):
         dx = self.velocity * round(math.cos(self.angle), 3)  # * dt

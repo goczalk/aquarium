@@ -149,11 +149,7 @@ def simulation_step():
 
     copy_list = list(fish_list)
     # for fish in copy_list:
-    for i, fish in enumerate(copy_list):
-        # if(i == 0):
-        #     fish.angle = 30 * 3.14 / 180
-        # else:
-        #     fish.angle = 45 * 3.14 / 180
+    for fish in copy_list:
 
         if fish.is_ill:
             ill_fish_counter += 1
