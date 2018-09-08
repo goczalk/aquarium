@@ -42,9 +42,7 @@ FISH_START_NUM = 10
 DISEASE_DEADLINE = 3000  # number of units of screen refresh
 DISEASE_PROBABILITY = 99
 
-
 """ /CONSTANTS """
-
 
 # list of fish
 fish_list = []
@@ -79,8 +77,8 @@ def main():
         for event in pygame.event.get():
             if event.type == QUIT:
                 done = True
-          #  elif e.type is KEYDOWN and e.key == K_ESCAPE:
-          #      done = True
+            #  elif e.type is KEYDOWN and e.key == K_ESCAPE:
+            #      done = True
             else:
                 application.event(event)
 
@@ -126,11 +124,10 @@ def initialize():
         plancton_list.append(Plancton())
 
 
-
 def simulation_step():
     global fish_list, fishsprite_list, eggs_list, plancton_list, plancton_add_counter, \
-            plancton_random_range_radians, application, screen, background, aqLabel, \
-            time_unit_counter, fish_year_passed
+        plancton_random_range_radians, application, screen, background, aqLabel, \
+        time_unit_counter, fish_year_passed
 
     time_unit_counter += 1
 
@@ -152,7 +149,7 @@ def simulation_step():
 
     # TODO
     # czy dobry taki warunek? czy rybka może wiedzieć ile w CAŁYM AKWARIUM jest jedzenia?
-    #TODO
+    # TODO
     # tylko dla ryb drapieznych
     set_fish_chasing_each_other()
 
@@ -212,7 +209,8 @@ def simulation_step():
         time_unit_counter = 0
 
     # update labels in Statistic
-    aqLabel.update_plancton_fish_labels(fish_year_passed, len(plancton_list), male_counter, female_counter, ill_fish_counter)
+    aqLabel.update_plancton_fish_labels(fish_year_passed, len(plancton_list), male_counter, female_counter,
+                                        ill_fish_counter)
 
     eggs_list = check_freshness_and_draw(eggs_list)
     plancton_list = check_freshness_and_draw(plancton_list)
@@ -238,8 +236,8 @@ def get_closest_fish_in_sight(current_fish):
     index = -1
     for i, fish in enumerate(fish_list):
         if fish != current_fish:
-            dist = math.sqrt((current_fish.x-fish.x) * (current_fish.x-fish.x) +
-                             (current_fish.y-fish.y) * (current_fish.y-fish.y))
+            dist = math.sqrt((current_fish.x - fish.x) * (current_fish.x - fish.x) +
+                             (current_fish.y - fish.y) * (current_fish.y - fish.y))
             if dist <= MAX_FISH_VISION and dist <= fish.size * VISION_MULTIPLIER:
                 if dist < min_dist:
                     min_dist = dist
@@ -249,6 +247,7 @@ def get_closest_fish_in_sight(current_fish):
         return None
     return fish_list[index]
 
+
 def check_if_bumped_into_ill_fish(fish, fish_list):
     # check if bumped into ill fish and caught disease
     fish_index = fish.rect.collidelist(fish_list)
@@ -256,6 +255,7 @@ def check_if_bumped_into_ill_fish(fish, fish_list):
         fish_bumped_into = fish_list[fish_index]
         if fish_bumped_into.is_ill:
             fish.catch_disease()
+
 
 def check_is_disease_strikes():
     global disease_counter, fish_list
@@ -266,6 +266,7 @@ def check_is_disease_strikes():
             random_index = random.randrange(0, len(fish_list))
             fish_list[random_index].catch_disease()
             disease_counter = 0
+
 
 def check_freshness_and_draw(item_list):
     for item in item_list:
@@ -297,5 +298,6 @@ def generate_additional_plancton(plancton_add_counter, plancton_list, plancton_r
         for _ in range(number_of_plancton_to_add):
             plancton_list.append(Plancton())
     return plancton_add_counter, plancton_list, plancton_random_range_radians
+
 
 if __name__ == '__main__': main()

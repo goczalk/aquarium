@@ -5,23 +5,21 @@ File with classes of creatures
 import random
 import math
 import pygame
+
 # from render import load_png
 
 """ CONSTANTS """
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
-
 """ SCREEN """
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 500
-
 
 """ PLANCTON """
 MIN_PL_RADIUS = 2
 MAX_PL_RADIUS = 4
 PLANCTON_FRESHNESS = 500
-
 
 """ EGG """
 EGG_FRESHNESS = 500
@@ -64,22 +62,22 @@ MAX_HP = 100
 HP_FASTER_AGING = 0.2 * MAX_HP
 HP_SLOWER_AGING = 0.8 * MAX_HP
 
-SLOWER_FASTER_AGING_COUNTER = 10 # if so many times in row Energy is below/over ENERGY_FASTER_AGING/ENERGY_SLOWER_AGING
-ADDITIONAL_FISH_YEAR = 0.1 * FISH_YEAR # health is decreasing (10%) faster or slower (such num is -/+ to counter)
-                                       # it can be -/+ only 3 times in a row  as you can't inifnitly slower/faster aging
+SLOWER_FASTER_AGING_COUNTER = 10  # if so many times in row Energy is below/over ENERGY_FASTER_AGING/ENERGY_SLOWER_AGING
+ADDITIONAL_FISH_YEAR = 0.1 * FISH_YEAR  # health is decreasing (10%) faster or slower (such num is -/+ to counter)
+# it can be -/+ only 3 times in a row  as you can't inifnitly slower/faster aging
 
 """ Regeneration """
 HP_REGENERATION_POSSIBLE = 0.9 * MAX_HP
 ENERGY_REGENERATION_POSSIBLE = 0.8 * MAX_ENERGY
-REGENERATION_CYCLE = 20 # number of units fish has to wait for regeneration
+REGENERATION_CYCLE = 20  # number of units fish has to wait for regeneration
 ENERGY_REGENERATION_COST = 0.1 * MAX_ENERGY
 
 """ Reproduction  """
-LAYING_EGG_PROBABILITY = 1 # Probability of laying eggs is 1/(LAYING_EGG_PROBABILITY+1)
-                           # if const is 3 -> probability is 25%
+LAYING_EGG_PROBABILITY = 1  # Probability of laying eggs is 1/(LAYING_EGG_PROBABILITY+1)
+# if const is 3 -> probability is 25%
 HP_REPRODUCTION_POSSIBLE = 0.25 * MAX_HP
 ENERGY_REPRODUCTION_POSSIBLE = 0.5 * MAX_ENERGY
-REPRODUCTION_POSSIBLE = 300 # Minimum number of time units between each reproduction
+REPRODUCTION_POSSIBLE = 300  # Minimum number of time units between each reproduction
 ENERGY_REPRODUCTION_COST = 0.2 * MAX_ENERGY
 NEW_FISH_NUM = 1
 
@@ -99,25 +97,26 @@ class Plancton:
     self.screen - screen to display on
     self.xy - x, y position
     """
-    
+
     def __init__(self):
         x = random.randrange(SCREEN_WIDTH)
         y = random.randrange(SCREEN_HEIGHT)
-        self.radius = random.randrange(MIN_PL_RADIUS, MAX_PL_RADIUS+1)
+        self.radius = random.randrange(MIN_PL_RADIUS, MAX_PL_RADIUS + 1)
         self.xy = (x, y)
         self.rect = pygame.Rect(self.xy, (self.radius, self.radius))
         self.screen = pygame.display.get_surface()
         self.freshness = 0
-    
+
     def is_fresh(self):
         """
         Returns true if plancton is fresh
         """
         self.freshness += 1
-        return True if self.freshness < PLANCTON_FRESHNESS else False        
+        return True if self.freshness < PLANCTON_FRESHNESS else False
 
     def draw(self):
         pygame.draw.circle(self.screen, 0x339966, self.xy, self.radius)
+
 
 class Egg:
     """
@@ -127,14 +126,14 @@ class Egg:
     self.screen - screen to display on
     self.xy - x, y position
     """
-    
+
     def __init__(self, x, y):
         self.radius = 1
         self.xy = (x, y)
         self.rect = pygame.Rect(self.xy, (self.radius, self.radius))
         self.screen = pygame.display.get_surface()
         self.freshness = 0
-        
+
     def is_fresh(self):
         """
         Returns true if egg is fresh
@@ -177,10 +176,10 @@ class Fish(pygame.sprite.Sprite):
     self.regeneration_counter - counter of frames when fish is regenerating
     self.slower_aging_counter - counter of energies in row for slower aging
     """
-    
+
     def __init__(self):
-        #pygame.sprite.Sprite.__init__(self)
-        
+        # pygame.sprite.Sprite.__init__(self)
+
         # initilize font
         self.FONT = pygame.font.SysFont("monospace", 15)
 
@@ -188,7 +187,7 @@ class Fish(pygame.sprite.Sprite):
         self.randomize_gender()
         self.randomize_size()
         xy = self._init_position()
-        
+
         self.rect = pygame.Rect(xy, (self.size, self.size))
 
         self.energy = MAX_ENERGY
@@ -229,7 +228,7 @@ class Fish(pygame.sprite.Sprite):
             self.gender = "male"
 
     def set_colour(self):
-        if self.gender == "female" :
+        if self.gender == "female":
             self.colour = 0xcc0066
         else:
             self.colour = 0x333399
@@ -241,7 +240,7 @@ class Fish(pygame.sprite.Sprite):
             return self.colour
 
     def randomize_size(self):
-        self.size = random.randrange(MIN_FISH_SIZE, MAX_FISH_SIZE+1)
+        self.size = random.randrange(MIN_FISH_SIZE, MAX_FISH_SIZE + 1)
 
     def fish_on_chasing_point(self):
         if abs(self.x - self.point_x) <= 10 and abs(self.y - self.point_y) <= 10:
@@ -357,12 +356,12 @@ class Fish(pygame.sprite.Sprite):
                 self.init_vector()
             self.rect.x = self.x
             self.rect.y = self.y
-            
+
             self.decrease_energy()
             self.change_speed_or_regenerate()
             self.decrease_hp()
             self.aging()
-    
+
     def decrease_energy(self):
         """
         When fish is moving faster it uses up more energy.
@@ -399,7 +398,7 @@ class Fish(pygame.sprite.Sprite):
         It can be -/+ only 3 in a row times as you can't inifnitly slower/faster aging
         """
         self.age_time_counter += 1
-        
+
         if self.energy >= HP_SLOWER_AGING:
             self.slower_aging_counter += 1
         else:
@@ -437,7 +436,7 @@ class Fish(pygame.sprite.Sprite):
         """
         self.reproduction_counter += 1
         if self.gender == "female":
-            if(self.reproduction_counter >= REPRODUCTION_POSSIBLE):
+            if (self.reproduction_counter >= REPRODUCTION_POSSIBLE):
                 if self.hp >= HP_REPRODUCTION_POSSIBLE and self.energy >= ENERGY_REPRODUCTION_POSSIBLE:
                     q = random.randrange(0, LAYING_EGG_PROBABILITY)
                     if q == 0:
@@ -453,7 +452,7 @@ class Fish(pygame.sprite.Sprite):
         """
         self.reproduction_counter += 1
         if self.gender == "male":
-            if(self.reproduction_counter >= REPRODUCTION_POSSIBLE):
+            if self.reproduction_counter >= REPRODUCTION_POSSIBLE:
                 if self.hp >= HP_REPRODUCTION_POSSIBLE and self.energy >= ENERGY_REPRODUCTION_POSSIBLE:
                     q = random.randrange(0, LAYING_EGG_PROBABILITY)
                     if q == 0:
@@ -469,18 +468,18 @@ class Fish(pygame.sprite.Sprite):
         x, y, width, height = self.rect
         x = x - self.size
         y = y - self.size
-        y_label = y - height/0.6
+        y_label = y - height / 0.6
 
         # draw rect with energy
-        energy_ratio = self.energy/MAX_ENERGY
+        energy_ratio = self.energy / MAX_ENERGY
         label_width = LABEL_WIDTH * energy_ratio
         Rgb = 255
         if energy_ratio > 0.5:
             Rgb = 255 - 255 * energy_ratio
         y_rect = y - height
-        if y <= height/0.8:
-            y_label = y + height*1.8
-            y_rect = y + height*2.4
+        if y <= height / 0.8:
+            y_label = y + height * 1.8
+            y_rect = y + height * 2.4
 
         self.screen.blit(energy_num_label, (x, y_label))
         pygame.draw.rect(self.screen, (Rgb, 200, 0), (x, y_rect, label_width, LABEL_HEIGHT))
@@ -491,18 +490,18 @@ class Fish(pygame.sprite.Sprite):
         x, y, width, height = self.rect
         x = x - self.size
         y = y - self.size
-        y_label = y - height/1.2
+        y_label = y - height / 1.2
 
         # draw rect with hp
-        hp_ratio = self.hp/MAX_HP
+        hp_ratio = self.hp / MAX_HP
         label_width = LABEL_WIDTH * hp_ratio
         Rgb = 255
         if hp_ratio > 0.5:
             Rgb = 255 - 255 * hp_ratio
-        y_rect = y - height/5
-        if y <= height/0.8:
-            y_rect = y + height*3.2
-            y_label = y + height*2.5
+        y_rect = y - height / 5
+        if y <= height / 0.8:
+            y_rect = y + height * 3.2
+            y_label = y + height * 2.5
 
         self.screen.blit(hp_num_label, (x, y_label))
         pygame.draw.rect(self.screen, (Rgb, 200, 0), (x, y_rect, label_width, LABEL_HEIGHT))
