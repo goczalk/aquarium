@@ -249,12 +249,8 @@ class Fish(pygame.sprite.Sprite):
         else:
             return False
 
-    #temp
     def set_chased_fish(self, fish):
-        if self.chased_fish is not None:
-            self.chased_fish.colour = 0x333399
         self.chased_fish = fish
-        self.chased_fish.colour = 0x996677
 
     def choose_point_to_chase(self):
         self.point_x = random.randrange(SCREEN_WIDTH - self.size)

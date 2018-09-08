@@ -30,17 +30,18 @@ SCREEN_HEIGHT = 500
 PLANCTON_START_NUM = 50
 PLANCTON_TIMER = 360
 PLANCTON_MAX_TO_ADD = 80
+HUNGER_PLANCTON_LIMIT = PLANCTON_MAX_TO_ADD * 0.6
+
 MAX_RADIANS_VALUE = 180 * 0.017
 # how many radians are added to random range max to calculate sinus of how much plancton will be produced. bigger the division, slower the sinusoidal func will go
-RADIANS_CHANGE = MAX_RADIANS_VALUE/8
+RADIANS_CHANGE = MAX_RADIANS_VALUE / 8
 
 """ FISH """
-FISH_START_NUM = 3
+FISH_START_NUM = 10
 
-DISEASE_DEADLINE = 3000 # number of units of screen refresh
+DISEASE_DEADLINE = 3000  # number of units of screen refresh
 DISEASE_PROBABILITY = 99
 
-HUNGER_PLANCTON_LIMIT = PLANCTON_MAX_TO_ADD * 0.6
 
 """ /CONSTANTS """
 
@@ -150,26 +151,10 @@ def simulation_step():
                                                                  plancton_random_range_radians)
 
     # TODO
-    # zrobic z tego funkcje???
-
-    # TODO
     # czy dobry taki warunek? czy rybka może wiedzieć ile w CAŁYM AKWARIUM jest jedzenia?
-    if len(plancton_list) <= HUNGER_PLANCTON_LIMIT:
-        #TODO tylko dla ryb drapieznych
-        for i, fish in enumerate(fish_list):
-            ## wywal
-            if i == 0:
-                pygame.draw.circle(screen, 0x111111, (fish.point_x, fish.point_x), 15)
-
-                fish.colour = 0x116442
-                closest_fish = get_closest_fish_in_sight(fish)
-
-                # temporary
-                if closest_fish is not None:
-                    fish.set_chased_fish(closest_fish)
-                    print ("chased x: "  + str(fish.chased_fish.x) + " chased y: " + str(fish.chased_fish.x))
-
-                # fish.chased_fish = closest_fish
+    #TODO
+    # tylko dla ryb drapieznych
+    set_fish_chasing_each_other()
 
     copy_list = list(fish_list)
     for fish in copy_list:
@@ -238,6 +223,15 @@ def simulation_step():
     pygame.display.flip()
 
 
+def set_fish_chasing_each_other():
+    global plancton_list, fish_list
+    if len(plancton_list) <= HUNGER_PLANCTON_LIMIT:
+        for i, fish in enumerate(fish_list):
+            closest_fish = get_closest_fish_in_sight(fish)
+            if closest_fish is not None:
+                fish.set_chased_fish(closest_fish)
+
+
 def get_closest_fish_in_sight(current_fish):
     global fish_list
     min_dist = math.inf
@@ -253,11 +247,7 @@ def get_closest_fish_in_sight(current_fish):
 
     if index == -1:
         return None
-    else:
-        print("I CAN SEE YOU")
-
     return fish_list[index]
-
 
 def check_if_bumped_into_ill_fish(fish, fish_list):
     # check if bumped into ill fish and caught disease
@@ -266,7 +256,6 @@ def check_if_bumped_into_ill_fish(fish, fish_list):
         fish_bumped_into = fish_list[fish_index]
         if fish_bumped_into.is_ill:
             fish.catch_disease()
-
 
 def check_is_disease_strikes():
     global disease_counter, fish_list
