@@ -33,7 +33,7 @@ GONIENIE INNYCH RYBEK
 Rybka jest w stanie gonić inne rybki. Ponieważ rybki nie zjadają swoich pobratymców jeśli nie muszą, gonienie innej rybki następuje tylko gdy w akwarium
 jest za mało pożywienia (mniej niż HUNGER_PLANCTON_LIMIT).
 Gonić mogą tylo drapieżne rybki gdyż tylko one mogą zjeść inną rybkę.
-Rybka zacznie gonić najbliższą rybkę, którą dostrzeże. Zasięg wzroku rybki zależy od wielkości rybki, rybki większe łatwiej jest zauważyć niż mniejsze.
+Rybka zacznie gonić najbliższą rybkę, którą dostrzeże i która jest mniejsza od niej. Zasięg wzroku rybki zależy od wielkości rybki, rybki większe łatwiej jest zauważyć niż mniejsze.
 Aby uzyskać wartość zasięgu wzroku mnożymy rozmiar potencjalnego celu przez VISION_MULTIPLIER. Zasięg wzroku nie może być większy niż MAX_FISH_VISION.
 Jeśli najbliższa rybka została wzięta na celownik zostaje goniona, wtedy prędkość naszej rybki zwiększa się do CHASING_SPEED.
 Za większą prędkość poruszania się zabieramy więcej punktów energii.

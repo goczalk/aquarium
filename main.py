@@ -224,18 +224,20 @@ def simulation_step():
 def set_fish_chasing_each_other():
     global plancton_list, fish_list
     if len(plancton_list) <= HUNGER_PLANCTON_LIMIT:
-        for i, fish in enumerate(fish_list):
-            closest_fish = get_closest_fish_in_sight(fish)
-            if closest_fish is not None:
-                fish.set_chased_fish(closest_fish)
+        for fish in fish_list:
+            closest_fish = get_closest_bigger_fish_in_sight(fish)
+            fish.set_chased_fish(closest_fish)
+    else:
+        for fish in fish_list:
+            fish.set_chased_fish(None)
 
 
-def get_closest_fish_in_sight(current_fish):
+def get_closest_bigger_fish_in_sight(current_fish):
     global fish_list
     min_dist = math.inf
     index = -1
     for i, fish in enumerate(fish_list):
-        if fish != current_fish:
+        if fish != current_fish and fish.size < current_fish.size :
             dist = math.sqrt((current_fish.x - fish.x) * (current_fish.x - fish.x) +
                              (current_fish.y - fish.y) * (current_fish.y - fish.y))
             if dist <= MAX_FISH_VISION and dist <= fish.size * VISION_MULTIPLIER:
