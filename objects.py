@@ -288,14 +288,11 @@ class Fish(pygame.sprite.Sprite):
         pygame.draw.circle(self.screen, self.get_colour(), (self.rect.x, self.rect.y), self.size)
         self.draw_age()
 
-        # narysuj punkt!
-        self.xy_point = (self.point_x, self.point_y)
-        pygame.draw.circle(self.screen, 0x1112255, self.xy_point, 10)
         # self.area = screen.get_rect()
 
     def update(self):
         """
-        Updates velocity, energy, health. Draws energy and healt indicator.
+        Updates velocity, energy, health. Draws energy and health indicator.
         """
         # check if dead
         if self.hp > 0:

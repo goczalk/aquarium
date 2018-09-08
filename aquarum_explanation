@@ -27,6 +27,7 @@ Prędkość poruszania się rybki zależy od jej energii. Powyżej/bądź równo
 
 PORUSZANIE SIĘ RYBKI
 Każdy ruch rybki kosztuje ją ENERGY_POINT, jeśli rybka porusza się szybko, odbierany jest jej dodatkowy ADDITIONAL_ENERGY_POINT. Energia rybki nie może spaść poniżej MIN_ENERGY.
+Jeśli rybka niczego nie goni, ani nie ucieka, porusza się próbując wpłynąc na punkt, który jest dla niej losowany.
 
 STARZENIE SIĘ RYBKI
 Rybka naturalnie "starzeje się" - podwyższany jest jej wiek (AGE) wraz z przemijającym czasem.

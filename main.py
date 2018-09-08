@@ -35,7 +35,7 @@ MAX_RADIANS_VALUE = 180 * 0.017
 RADIANS_CHANGE = MAX_RADIANS_VALUE/8
 
 """ FISH """
-FISH_START_NUM = 1
+FISH_START_NUM = 10
 
 DISEASE_DEADLINE = 3000 # number of units of screen refresh
 DISEASE_PROBABILITY = 99
@@ -148,7 +148,6 @@ def simulation_step():
 
 
     copy_list = list(fish_list)
-    # for fish in copy_list:
     for fish in copy_list:
 
         if fish.is_ill:
