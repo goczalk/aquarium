@@ -7,7 +7,6 @@ import math
 import pygame
 # from render import load_png
 
-
 """ CONSTANTS """
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -33,19 +32,30 @@ MAX_FISH_SIZE = 18
 
 FISH_YEAR = 200  # Number of units (frames) which has to pass to increase age
 
-""" Enegry"""
+# fish vision cannot be more or equal to SCREEN_WIDTH/4 -> then fish would see each other from both sides
+# if aquarium would be infinite in width
+
+""" Moving """
+VISION_MULTIPLIER = 10
+MAX_FISH_VISION = SCREEN_WIDTH / 5
+
+ANGLE_CHANGE_MULTIPLIER = 0.01
+MIN_SPEED = 1
+MAX_SPEED = 2
+CHASING_SPEED = 3
+
+""" Energy"""
 MAX_ENERGY = 100
 MIN_ENERGY = 1
 
 # TODO
 # MAX_ENERGY/2?
-ENERGY_CHANGE_VELOCITY = MAX_ENERGY/2
+ENERGY_CHANGE_VELOCITY = 0.3 * MAX_ENERGY
 
 # TODO
 # 'slow' speed: 1 move = 1 energy point?
 # 'fast' speed: 1 move = 2 energy point?
 ENERGY_POINT = 0.025
-ADDITIONAL_ENERGY_POINT = 0.025
 MAX_HUNGRY_TIME = 0.3 * FISH_YEAR
 MIN_ENERGY_HP_LOSE = 0.1 * MAX_ENERGY
 
@@ -140,6 +150,7 @@ class Fish(pygame.sprite.Sprite):
     """
     self.angle - int for angle
     self.angle_difference - difference counted to chased point
+    self.chased_fish - fish which our fish want to chase
     self.colour - colour of the fish depending on its gender
     self.energy - current energy
     self.FONT - font for energy label
@@ -186,6 +197,7 @@ class Fish(pygame.sprite.Sprite):
         self.set_colour()
         self.is_ill = False
 
+        self.chased_fish = None
         self.init_vector()
         self.choose_point_to_chase()
         self.screen = pygame.display.get_surface()
@@ -237,20 +249,45 @@ class Fish(pygame.sprite.Sprite):
         else:
             return False
 
-    #TODO
-    # narazie losowe punkty!
+    #temp
+    def set_chased_fish(self, fish):
+        if self.chased_fish is not None:
+            self.chased_fish.colour = 0x333399
+        self.chased_fish = fish
+        self.chased_fish.colour = 0x996677
+
     def choose_point_to_chase(self):
         self.point_x = random.randrange(SCREEN_WIDTH - self.size)
         self.point_y = random.randrange(SCREEN_HEIGHT - self.size)
 
     def calculate_angle_diff(self):
-        dx = self.point_x - self.x
+        if not self.is_chased_fish_still_visible():
+            self.chased_fish = None
+        else:
+            self.set_chasing_speed()
+
+        if self.chased_fish is not None:
+            chased_point_x = self.chased_fish.x
+            chased_point_y = self.chased_fish.y
+        else:
+            chased_point_x = self.point_x
+            chased_point_y = self.point_y
+
+        dx = chased_point_x - self.x
         # zeby zamienic na kartezjanski uklad -> zeby odpowiadal katowi
-        dy = (self.point_y - self.y) * -1
+        dy = (chased_point_y - self.y) * -1
 
         self.angle_difference = math.atan2(dy, dx)
         if self.angle_difference < 0:
             self.angle_difference += 2 * math.pi
+
+    def is_chased_fish_still_visible(self):
+        if self.chased_fish is None:
+            return False
+
+        dist = math.sqrt((self.x - self.chased_fish.x) * (self.x - self.chased_fish.x) +
+                         (self.y - self.chased_fish.y) * (self.y - self.chased_fish.y))
+        return dist <= MAX_FISH_VISION and dist <= self.chased_fish.size * VISION_MULTIPLIER
 
     def init_vector(self):
         # angle is same as in cartesian, +30deg (byt in radians) rotate to te left from OX, -30deg/330 rotates right
@@ -259,13 +296,16 @@ class Fish(pygame.sprite.Sprite):
 
     def change_speed(self):
         if self.energy >= ENERGY_CHANGE_VELOCITY:
-            self.velocity = 2
-            self.moves_fast = True
+            self.velocity = MAX_SPEED
         elif self.energy < ENERGY_CHANGE_VELOCITY:
-            self.velocity = 1
-            # if self.energy <= MIN_ENERGY:
-            #     self.velocity = 1
-            self.moves_fast = False
+            self.velocity = MIN_SPEED
+
+    def set_chasing_speed(self):
+        """
+        When fish is chasing another fish it uses as much energy as it can.
+        """
+        if self.energy > MIN_ENERGY and self.energy > CHASING_SPEED * ENERGY_POINT:
+            self.velocity = CHASING_SPEED
 
     def change_speed_or_regenerate(self):
         if self.hp <= HP_REGENERATION_POSSIBLE and self.energy >= ENERGY_REGENERATION_POSSIBLE:
@@ -334,9 +374,7 @@ class Fish(pygame.sprite.Sprite):
         if self.energy <= MIN_ENERGY:
             self.energy = MIN_ENERGY
             return
-        self.energy -= ENERGY_POINT
-        if self.moves_fast:
-            self.energy -= ADDITIONAL_ENERGY_POINT
+        self.energy -= self.velocity * ENERGY_POINT
 
     def decrease_hp(self):
         """
@@ -483,7 +521,7 @@ class Fish(pygame.sprite.Sprite):
     def change_angle_to_chase(self):
         self.calculate_angle_diff()
         if self.angle < self.angle_difference:
-            self.angle += 0.007 * self.angle_difference
+            self.angle += ANGLE_CHANGE_MULTIPLIER * self.angle_difference
 
     def calc_new_pos(self):
         dx = self.velocity * round(math.cos(self.angle), 3)  # * dt

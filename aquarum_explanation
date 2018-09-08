@@ -23,11 +23,22 @@ JEDZENIE/ZDOBYWANIE ENERGII
 Każdorazowo jeśli rybka wpłynie na plankton otrzymuje ilość energii odpowiadająca rozmiarowi planktonu przemnożonego przez MULTIPLIER_FOR_FOOD. Oczywiście rybka nie może mieć energii większej niż MAX_ENERGY.
 
 PRĘDKOŚĆ RYBKI
-Prędkość poruszania się rybki zależy od jej energii. Powyżej/bądź równo z wartością ENERGY_CHANGE_VELOCITY rybka porusza się z prędkością 5 (hardcoded), poniżej porusza się z prędkością 3 (hardcoded). W momencie gdy rybka ma minimalną wartość energii MIN_ENERGY porusza się z prędkością 1 (hardcoded).
+Prędkość poruszania się rybki zależy od jej energii. Powyżej/bądź równo z wartością ENERGY_CHANGE_VELOCITY rybka porusza się z prędkością MAX_SPEED, poniżej porusza się z prędkością MIN_SPEED.
 
 PORUSZANIE SIĘ RYBKI
 Każdy ruch rybki kosztuje ją ENERGY_POINT, jeśli rybka porusza się szybko, odbierany jest jej dodatkowy ADDITIONAL_ENERGY_POINT. Energia rybki nie może spaść poniżej MIN_ENERGY.
 Jeśli rybka niczego nie goni, ani nie ucieka, porusza się próbując wpłynąc na punkt, który jest dla niej losowany.
+
+GONIENIE INNYCH RYBEK
+Rybka jest w stanie gonić inne rybki. Ponieważ rybki nie zjadają swoich pobratymców jeśli nie muszą, gonienie innej rybki następuje tylko gdy w akwarium
+jest za mało pożywienia (mniej niż HUNGER_PLANCTON_LIMIT).
+Gonić mogą tylo drapieżne rybki gdyż tylko one mogą zjeść inną rybkę.
+Rybka zacznie gonić najbliższą rybkę, którą dostrzeże. Zasięg wzroku rybki zależy od wielkości rybki, rybki większe łatwiej jest zauważyć niż mniejsze.
+Aby uzyskać wartość zasięgu wzroku mnożymy rozmiar potencjalnego celu przez VISION_MULTIPLIER. Zasięg wzroku nie może być większy niż MAX_FISH_VISION.
+Jeśli najbliższa rybka została wzięta na celownik zostaje goniona, wtedy prędkość naszej rybki zwiększa się do CHASING_SPEED.
+Za większą prędkość poruszania się zabieramy więcej punktów energii.
+Nawet jeśli rybki normalnie nie byłoby stać na szybkie poruszanie się (ze względu na ograniczenie ENERGY_CHANGE_VELOCITY), jeśli spełnione są warunki do gonienia, zacznie ona gonić rybkę!
+Toż to przecież chodzi o przetrwanie! Jedynie przy energii równej MIN_ENERGY nie zrobi tego, będzie poruszać się z MIN_SPEED.
 
 STARZENIE SIĘ RYBKI
 Rybka naturalnie "starzeje się" - podwyższany jest jej wiek (AGE) wraz z przemijającym czasem.

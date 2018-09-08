@@ -2,7 +2,7 @@
 File with main function
 """
 
-from objects import Fish, Plancton, FISH_YEAR
+from objects import Fish, Plancton, FISH_YEAR, MAX_FISH_VISION, VISION_MULTIPLIER
 from AquariumLabels import AquariumLabels
 import pygame
 from pygame.locals import *
@@ -35,10 +35,12 @@ MAX_RADIANS_VALUE = 180 * 0.017
 RADIANS_CHANGE = MAX_RADIANS_VALUE/8
 
 """ FISH """
-FISH_START_NUM = 10
+FISH_START_NUM = 3
 
 DISEASE_DEADLINE = 3000 # number of units of screen refresh
 DISEASE_PROBABILITY = 99
+
+HUNGER_PLANCTON_LIMIT = PLANCTON_MAX_TO_ADD * 0.6
 
 """ /CONSTANTS """
 
@@ -123,6 +125,7 @@ def initialize():
         plancton_list.append(Plancton())
 
 
+
 def simulation_step():
     global fish_list, fishsprite_list, eggs_list, plancton_list, plancton_add_counter, \
             plancton_random_range_radians, application, screen, background, aqLabel, \
@@ -146,6 +149,27 @@ def simulation_step():
     plancton_random_range_radians = generate_additional_plancton(plancton_add_counter, plancton_list,
                                                                  plancton_random_range_radians)
 
+    # TODO
+    # zrobic z tego funkcje???
+
+    # TODO
+    # czy dobry taki warunek? czy rybka może wiedzieć ile w CAŁYM AKWARIUM jest jedzenia?
+    if len(plancton_list) <= HUNGER_PLANCTON_LIMIT:
+        #TODO tylko dla ryb drapieznych
+        for i, fish in enumerate(fish_list):
+            ## wywal
+            if i == 0:
+                pygame.draw.circle(screen, 0x111111, (fish.point_x, fish.point_x), 15)
+
+                fish.colour = 0x116442
+                closest_fish = get_closest_fish_in_sight(fish)
+
+                # temporary
+                if closest_fish is not None:
+                    fish.set_chased_fish(closest_fish)
+                    print ("chased x: "  + str(fish.chased_fish.x) + " chased y: " + str(fish.chased_fish.x))
+
+                # fish.chased_fish = closest_fish
 
     copy_list = list(fish_list)
     for fish in copy_list:
@@ -212,6 +236,27 @@ def simulation_step():
     application.paint()
 
     pygame.display.flip()
+
+
+def get_closest_fish_in_sight(current_fish):
+    global fish_list
+    min_dist = math.inf
+    index = -1
+    for i, fish in enumerate(fish_list):
+        if fish != current_fish:
+            dist = math.sqrt((current_fish.x-fish.x) * (current_fish.x-fish.x) +
+                             (current_fish.y-fish.y) * (current_fish.y-fish.y))
+            if dist <= MAX_FISH_VISION and dist <= fish.size * VISION_MULTIPLIER:
+                if dist < min_dist:
+                    min_dist = dist
+                    index = i
+
+    if index == -1:
+        return None
+    else:
+        print("I CAN SEE YOU")
+
+    return fish_list[index]
 
 
 def check_if_bumped_into_ill_fish(fish, fish_list):
