@@ -27,6 +27,7 @@ EGG_FRESHNESS = 500
 """ FISH """
 MIN_FISH_SIZE = 13
 MAX_FISH_SIZE = 18
+PREDATOR_SIGN_SIZE = 8
 
 FISH_YEAR = 200  # Number of units (frames) which has to pass to increase age
 
@@ -157,6 +158,7 @@ class Fish(pygame.sprite.Sprite):
     self.hp - current healt points
     self.image - loaded image
     self.is_ill - boolean if has disease
+    self.is_predator - boolean if is predator
     self.moves_fast - boolean, true when fish is moving fast
     self.rect - Rectangle object
     self.size - radius of the circle
@@ -186,6 +188,7 @@ class Fish(pygame.sprite.Sprite):
         # self.image, self.rect = load_png('ball.png')
         self.randomize_gender()
         self.randomize_size()
+        self.randomize_predatory()
         xy = self._init_position()
 
         self.rect = pygame.Rect(xy, (self.size, self.size))
@@ -226,6 +229,13 @@ class Fish(pygame.sprite.Sprite):
             self.gender = "female"
         else:
             self.gender = "male"
+
+    def randomize_predatory(self):
+        x = random.randrange(0, 3)
+        if x == 0:
+            self.is_predator = True
+        else:
+            self.is_predator = False
 
     def set_colour(self):
         if self.gender == "female":
@@ -321,8 +331,9 @@ class Fish(pygame.sprite.Sprite):
         self.draw_energy_indicators()
         self.draw_hp_indicators()
         pygame.draw.circle(self.screen, self.get_colour(), (self.rect.x, self.rect.y), self.size)
+        if self.is_predator:
+            pygame.draw.circle(self.screen, BLACK, (self.rect.x, self.rect.y), PREDATOR_SIGN_SIZE)
         self.draw_age()
-
         # self.area = screen.get_rect()
 
     def update(self):

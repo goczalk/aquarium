@@ -30,7 +30,9 @@ Każdy ruch rybki kosztuje ją ENERGY_POINT, jeśli rybka porusza się szybko, o
 Jeśli rybka niczego nie goni, ani nie ucieka, porusza się próbując wpłynąc na punkt, który jest dla niej losowany.
 
 GONIENIE INNYCH RYBEK
-Rybka jest w stanie gonić inne rybki. Ponieważ rybki nie zjadają swoich pobratymców jeśli nie muszą, gonienie innej rybki następuje tylko gdy w akwarium
+Rybka jest w stanie gonić inne rybki jeśli jest predatorem. Prawdopodobieństwo bycia predatorem to 1/3.
+Predator oznaczany jest poprzez czarną kropkę na środku swojego ciała.
+Ponieważ rybki nie zjadają swoich pobratymców jeśli nie muszą, gonienie innej rybki następuje tylko gdy w akwarium
 jest za mało pożywienia (mniej niż HUNGER_PLANCTON_LIMIT).
 Gonić mogą tylo drapieżne rybki gdyż tylko one mogą zjeść inną rybkę.
 Rybka zacznie gonić najbliższą rybkę, którą dostrzeże i która jest mniejsza od niej. Zasięg wzroku rybki zależy od wielkości rybki, rybki większe łatwiej jest zauważyć niż mniejsze.

@@ -225,8 +225,9 @@ def set_fish_chasing_each_other():
     global plancton_list, fish_list
     if len(plancton_list) <= HUNGER_PLANCTON_LIMIT:
         for fish in fish_list:
-            closest_fish = get_closest_bigger_fish_in_sight(fish)
-            fish.set_chased_fish(closest_fish)
+            if fish.is_predator:
+                closest_fish = get_closest_bigger_fish_in_sight(fish)
+                fish.set_chased_fish(closest_fish)
     else:
         for fish in fish_list:
             fish.set_chased_fish(None)
