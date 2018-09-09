@@ -153,6 +153,7 @@ class Fish(pygame.sprite.Sprite):
     self.chased_fish - fish which our fish want to chase
     self.colour - colour of the fish depending on its gender
     self.energy - current energy
+    self.escape_from_fish - fish from which we should escape
     self.FONT - font for energy label
     self.gender - "male" or "female", chosen randomly on init
     self.hp - current healt points
@@ -200,8 +201,9 @@ class Fish(pygame.sprite.Sprite):
         self.is_ill = False
 
         self.chased_fish = None
+        self.escape_from_fish = None
         self.init_vector()
-        self.choose_point_to_chase()
+        self.choose_random_point_to_chase()
         self.screen = pygame.display.get_surface()
 
         self._init_counters()
@@ -261,17 +263,22 @@ class Fish(pygame.sprite.Sprite):
     def set_chased_fish(self, fish):
         self.chased_fish = fish
 
-    def choose_point_to_chase(self):
+    def set_escape_from_fish(self, fish):
+        self.escape_from_fish = fish
+
+    def choose_random_point_to_chase(self):
         self.point_x = random.randrange(SCREEN_WIDTH - self.size)
         self.point_y = random.randrange(SCREEN_HEIGHT - self.size)
 
     def calculate_angle_diff(self):
-        if not self.is_chased_fish_still_visible():
-            self.chased_fish = None
-        else:
-            self.set_chasing_speed()
+        self.check_if_escape_and_chased_fish_visible()
 
-        if self.chased_fish is not None:
+        if self.escape_from_fish is not None:
+            self.set_chasing_speed()
+            chased_point_x = self.escape_from_fish.x * (-1)
+            chased_point_y = self.escape_from_fish.y * (-1)
+        elif self.chased_fish is not None:
+            self.set_chasing_speed()
             chased_point_x = self.chased_fish.x
             chased_point_y = self.chased_fish.y
         else:
@@ -286,13 +293,11 @@ class Fish(pygame.sprite.Sprite):
         if self.angle_difference < 0:
             self.angle_difference += 2 * math.pi
 
-    def is_chased_fish_still_visible(self):
-        if self.chased_fish is None:
-            return False
-
-        dist = math.sqrt((self.x - self.chased_fish.x) * (self.x - self.chased_fish.x) +
-                         (self.y - self.chased_fish.y) * (self.y - self.chased_fish.y))
-        return dist <= MAX_FISH_VISION and dist <= self.chased_fish.size * VISION_MULTIPLIER
+    def check_if_escape_and_chased_fish_visible(self):
+        if not is_still_visible_by(self.chased_fish, self):
+            self.chased_fish = None
+        if not is_still_visible_by(self.escape_from_fish, self):
+            self.escape_from_fish = None
 
     def init_vector(self):
         # angle is same as in cartesian, +30deg (byt in radians) rotate to te left from OX, -30deg/330 rotates right
@@ -344,7 +349,7 @@ class Fish(pygame.sprite.Sprite):
         if self.hp > 0:
 
             if self.fish_on_chasing_point():
-                self.choose_point_to_chase()
+                self.choose_random_point_to_chase()
 
             self.change_angle_to_chase()
             self.calc_new_pos()
@@ -566,3 +571,22 @@ class Fish(pygame.sprite.Sprite):
 
     def catch_disease(self):
         self.is_ill = True
+
+
+def is_in_vision(fish, dist):
+    if dist <= MAX_FISH_VISION and dist <= fish.size * VISION_MULTIPLIER:
+        return True
+    return False
+
+
+def calculate_distance(first, second):
+    dist = math.sqrt((first.x - second.x) * (first.x - second.x) +
+                     (first.y - second.y) * (first.y - second.y))
+    return dist
+
+
+def is_still_visible_by(fish_to_see, fish):
+    if fish_to_see is None:
+        return False
+    dist = calculate_distance(fish, fish_to_see)
+    return is_in_vision(fish_to_see, dist)

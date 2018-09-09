@@ -2,7 +2,7 @@
 File with main function
 """
 
-from objects import Fish, Plancton, FISH_YEAR, MAX_FISH_VISION, VISION_MULTIPLIER
+from objects import Fish, Plancton, FISH_YEAR, MAX_FISH_VISION, VISION_MULTIPLIER, is_in_vision, calculate_distance
 from AquariumLabels import AquariumLabels
 import pygame
 from pygame.locals import *
@@ -149,9 +149,8 @@ def simulation_step():
 
     # TODO
     # czy dobry taki warunek? czy rybka może wiedzieć ile w CAŁYM AKWARIUM jest jedzenia?
-    # TODO
-    # tylko dla ryb drapieznych
     set_fish_chasing_each_other()
+    set_fish_escaping_from_each_other()
 
     copy_list = list(fish_list)
     for fish in copy_list:
@@ -226,22 +225,28 @@ def set_fish_chasing_each_other():
     if len(plancton_list) <= HUNGER_PLANCTON_LIMIT:
         for fish in fish_list:
             if fish.is_predator:
-                closest_fish = get_closest_bigger_fish_in_sight(fish)
+                closest_fish = get_closest_appropriate_fish_in_sight(fish, fish_is_smaller)
                 fish.set_chased_fish(closest_fish)
     else:
         for fish in fish_list:
             fish.set_chased_fish(None)
 
 
-def get_closest_bigger_fish_in_sight(current_fish):
+def set_fish_escaping_from_each_other():
+    global plancton_list, fish_list
+    for fish in fish_list:
+        closest_fish = get_closest_appropriate_fish_in_sight(fish, fish_is_bigger_predator)
+        fish.set_escape_from_fish(closest_fish)
+
+
+def get_closest_appropriate_fish_in_sight(current_fish, size_relation_func):
     global fish_list
     min_dist = math.inf
     index = -1
     for i, fish in enumerate(fish_list):
-        if fish != current_fish and fish.size < current_fish.size :
-            dist = math.sqrt((current_fish.x - fish.x) * (current_fish.x - fish.x) +
-                             (current_fish.y - fish.y) * (current_fish.y - fish.y))
-            if dist <= MAX_FISH_VISION and dist <= fish.size * VISION_MULTIPLIER:
+        if fish != current_fish and size_relation_func(fish, current_fish):
+            dist = calculate_distance(current_fish, fish)
+            if is_in_vision(fish, dist):
                 if dist < min_dist:
                     min_dist = dist
                     index = i
@@ -249,6 +254,18 @@ def get_closest_bigger_fish_in_sight(current_fish):
     if index == -1:
         return None
     return fish_list[index]
+
+
+def fish_is_smaller(fish, current_fish):
+    if fish.is_predator and fish.size < current_fish.size:
+        return True
+    return False
+
+
+def fish_is_bigger_predator(fish, current_fish):
+    if fish.size > current_fish.size:
+        return True
+    return False
 
 
 def check_if_bumped_into_ill_fish(fish, fish_list):
