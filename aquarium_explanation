@@ -23,6 +23,7 @@ Podczas tworzenia rybki:
 JEDZENIE/ZDOBYWANIE ENERGII
 Każdorazowo jeśli rybka wpłynie na plankton otrzymuje ilość energii odpowiadająca rozmiarowi planktonu przemnożonego przez MULTIPLIER_FOR_FOOD.
 Oczywiście rybka nie może mieć energii większej niż MAX_ENERGY.
+Predatorzy mogą zjadać inne, mniejsze od siebie, rybki. Jeśli rybka zje rybkę, która była chora, sama zachorowuje.
 
 PRĘDKOŚĆ RYBKI
 Prędkość poruszania się rybki zależy od jej energii. Powyżej/bądź równo z wartością ENERGY_CHANGE_VELOCITY rybka porusza się z prędkością MAX_SPEED, poniżej porusza się z prędkością MIN_SPEED.
@@ -73,8 +74,12 @@ Jeśli ikra zostanie zapłodniona: pojawi się NEW_FISH_NUM nowych rybek w akwar
 Decyzja o rozmnażaniu następuje przed decyzją o regeneracji -> oznacza to, że reprodukcja jest "ważniejsza" dla rybki. Reprodukcja zabiera rybce ENERGY_REPRODUCTION_COST energii.
 
 UTRATA ZDROWIA
-Rybka traci HP gdy przez MAX_HUNGRY_TIME czasu jej energia wynosi poniżej MIN_ENERGY_HP_LOSE lub gdy jest chora. W momencie gdy HP = 0, rybka umiera.
+Rybka traci HP gdy przez MAX_HUNGRY_TIME czasu jej energia wynosi poniżej MIN_ENERGY_HP_LOSE oraz gdy jest chora. Jeśli jest i głodna i chora, traci życie podwójnie.
+W momencie gdy HP = 0, rybka umiera.
+
+CHOROBA
 Co jakiś czas (DISEASE_DEADLINE) może pojawić się choroba z prawdopodobieństwem 1/(DISEASE_PROBABILITY+1). Jedna z rybek jest losowana i zarażana chorobą.
+Jeśli rybka zje rybkę, która była chora, sama zachorowuje.
 
 ****
 PGU (GUI for pygame) download:

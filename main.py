@@ -47,6 +47,7 @@ DISEASE_PROBABILITY = 99
 # list of fish
 fish_list = []
 fishsprite_list = []
+dead_fish_list = []
 
 # list of fish eggs
 eggs_list = []
@@ -148,6 +149,10 @@ def simulation_step():
     plancton_random_range_radians = generate_additional_plancton(plancton_add_counter, plancton_list,
                                                                  plancton_random_range_radians)
 
+    remove_dead_fish_from_list(fish_list)
+    for dead_fish in dead_fish_list:
+        dead_fish.draw_circles_and_age()
+
     # TODO
     # czy dobry taki warunek? czy rybka może wiedzieć ile w CAŁYM AKWARIUM jest jedzenia?
     set_fish_chasing_each_other()
@@ -155,10 +160,6 @@ def simulation_step():
 
     copy_list = list(fish_list)
     for fish in copy_list:
-        if fish.hp <= 0:
-            fish.draw_circles_and_age()
-            break
-
         if fish.is_predator:
             predators_counter += 1
 
@@ -170,15 +171,15 @@ def simulation_step():
         else:
             male_counter += 1
 
+        if fish.gender == "male":
+            fish.catch_disease()
+
         fish.draw()
         check_if_bumped_into_plancton(fish)
 
         # TODO
         # uwazaj na przypadek samozjadania gdy rybka rosnie
         female_counter, male_counter = check_if_fish_eats_other_fish(female_counter, fish, male_counter)
-
-        # TODO zjedzenie chorej rybki powoduje chorobę -> nie tylko przebywanie!
-        # check_if_bumped_into_ill_fish(fish, fish_list)
 
         lay_egg(fish)
         female_counter, male_counter = check_if_bumped_into_egg(female_counter, fish, male_counter)
@@ -200,6 +201,13 @@ def simulation_step():
     pygame.display.flip()
 
 
+def remove_dead_fish_from_list(fish_list):
+    for fish in list(fish_list):
+        if fish.hp <= 0:
+            dead_fish_list.append(fish)
+            fish_list.remove(fish)
+
+
 def check_if_fish_eats_other_fish(female_counter, fish, male_counter):
     if fish.is_predator:
         fish_index = fish.rect.collidelist(fish_list)
@@ -212,6 +220,9 @@ def check_if_fish_eats_other_fish(female_counter, fish, male_counter):
                     female_counter -= 1
                 else:
                     male_counter -= 1
+
+                if eaten_fish.is_ill:
+                    fish.catch_disease()
     return female_counter, male_counter
 
 
