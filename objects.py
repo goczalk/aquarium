@@ -11,6 +11,7 @@ import pygame
 """ CONSTANTS """
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+GREY = 0x808080
 
 """ SCREEN """
 SCREEN_WIDTH = 1000
@@ -337,7 +338,7 @@ class Fish(pygame.sprite.Sprite):
         self.draw_hp_indicators()
         pygame.draw.circle(self.screen, self.get_colour(), (self.rect.x, self.rect.y), self.size)
         if self.is_predator:
-            pygame.draw.circle(self.screen, BLACK, (self.rect.x, self.rect.y), PREDATOR_SIGN_SIZE)
+            pygame.draw.circle(self.screen, GREY, (self.rect.x, self.rect.y), PREDATOR_SIGN_SIZE)
         self.draw_age()
         # self.area = screen.get_rect()
 

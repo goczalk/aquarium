@@ -163,45 +163,19 @@ def simulation_step():
         else:
             male_counter += 1
 
-        egg = fish.lay_eggs()
-        eggs_list += [egg] if egg is not None else []
+
         fish.draw()
+        check_if_bumped_into_plancton(fish)
 
-        # check if bumped into plancton
-        # which index does the ball bump into, -1 => none
-        plancton_index = fish.rect.collidelist([plancton.rect for plancton in plancton_list])
-        if plancton_index != -1:
-            # remove from plancton_list and add as much energy as big the plancton was
-            fish.increase_energy((plancton_list.pop(plancton_index)).radius)
-
-        # check if bumped into other fish
+        # TODO
         # uwazaj na przypadek samozjadania gdy rybka rosnie
-        # fish_index = fish.rect.collidelist(fish_list)
-        # if fish_index != -1:
-        #     if fish.size > fish_list[fish_index].size:
-        #         eaten_fish     = fish_list.pop(fish_index)
-        #         # remove from list and add as much energy as big the fish was
-        #         fish.increase_energy(eaten_fish.size)
-        #         if eaten_fish.gender == "female":
-        #             female_counter -= 1
-        #         else:
-        #             male_counter -= 1
+        female_counter, male_counter = check_if_fish_eats_other_fish(female_counter, fish, male_counter)
 
         # TODO zjedzenie chorej rybki powoduje chorobę -> nie tylko przebywanie!
         # check_if_bumped_into_ill_fish(fish, fish_list)
 
-        # check if bumped into egg
-        egg_index = fish.rect.collidelist([egg.rect for egg in eggs_list])
-        if egg_index != -1:
-            if fish.fertilize_eggs():
-                # remove from list and add fish
-                eggs_list.pop(egg_index)
-                new_fish = Fish()
-                fish_list.append(new_fish)
-                if new_fish.gender == "female":
-                    female_counter += 1
-                else:
-                    male_counter += 1
+        lay_egg(fish)
+        female_counter, male_counter = check_if_bumped_into_egg(female_counter, fish, male_counter)
 
     if time_unit_counter >= FISH_YEAR:
         fish_year_passed += 1
@@ -218,6 +192,50 @@ def simulation_step():
     application.paint()
 
     pygame.display.flip()
+
+
+def check_if_fish_eats_other_fish(female_counter, fish, male_counter):
+    if fish.is_predator:
+        fish_index = fish.rect.collidelist(fish_list)
+        if fish_index != -1:
+            if fish.size > fish_list[fish_index].size:
+                eaten_fish = fish_list.pop(fish_index)
+                # remove from list and add as much energy as big the fish was
+                fish.increase_energy(eaten_fish.size)
+                if eaten_fish.gender == "female":
+                    female_counter -= 1
+                else:
+                    male_counter -= 1
+    return female_counter, male_counter
+
+
+def lay_egg(fish):
+    global eggs_list
+    egg = fish.lay_eggs()
+    eggs_list += [egg] if egg is not None else []
+
+
+def check_if_bumped_into_egg(female_counter, fish, male_counter):
+    egg_index = fish.rect.collidelist([egg.rect for egg in eggs_list])
+    if egg_index != -1:
+        if fish.fertilize_eggs():
+            # remove from list and add fish
+            eggs_list.pop(egg_index)
+            new_fish = Fish()
+            fish_list.append(new_fish)
+            if new_fish.gender == "female":
+                female_counter += 1
+            else:
+                male_counter += 1
+    return female_counter, male_counter
+
+
+def check_if_bumped_into_plancton(fish):
+    # which index does the ball bump into, -1 => none
+    plancton_index = fish.rect.collidelist([plancton.rect for plancton in plancton_list])
+    if plancton_index != -1:
+        # remove from plancton_list and add as much energy as big the plancton was
+        fish.increase_energy((plancton_list.pop(plancton_index)).radius)
 
 
 def set_fish_chasing_each_other():
