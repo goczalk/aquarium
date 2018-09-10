@@ -138,6 +138,7 @@ def simulation_step():
     # male, female, ill counters
     male_counter = 0
     female_counter = 0
+    predators_counter = 0
     ill_fish_counter = 0
 
     # generate additional plancton every PLANCTON_TIMER
@@ -154,6 +155,12 @@ def simulation_step():
 
     copy_list = list(fish_list)
     for fish in copy_list:
+        if fish.hp <= 0:
+            fish.draw_circles_and_age()
+            break
+
+        if fish.is_predator:
+            predators_counter += 1
 
         if fish.is_ill:
             ill_fish_counter += 1
@@ -162,7 +169,6 @@ def simulation_step():
             female_counter += 1
         else:
             male_counter += 1
-
 
         fish.draw()
         check_if_bumped_into_plancton(fish)
@@ -183,7 +189,7 @@ def simulation_step():
 
     # update labels in Statistic
     aqLabel.update_plancton_fish_labels(fish_year_passed, len(plancton_list), male_counter, female_counter,
-                                        ill_fish_counter)
+                                        predators_counter, ill_fish_counter)
 
     eggs_list = check_freshness_and_draw(eggs_list)
     plancton_list = check_freshness_and_draw(plancton_list)

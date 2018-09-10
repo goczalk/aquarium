@@ -4,11 +4,16 @@ import pygame
 BLACK = (0, 0, 0)
 
 class AquariumLabels(gui.Table):
-    def update_plancton_fish_labels(self, units_of_time, plancton, male, female, ill):
+    def update_plancton_fish_labels(self, units_of_time, plancton, male, female, predators, ill):
             self.time_label.set_text("Time: {0}".format(units_of_time))
             self.plancton_label.set_text("Plancton: {0}".format(plancton))
             self.male_fish_label.set_text("Male fish: {0}".format(male))
             self.female_fish_label.set_text("Female fish: {0}".format(female))
+            if (male + female) == 0:
+                predators_percentage = 0
+            else:
+                predators_percentage = round(predators/(male + female)*100)
+            self.predator_fish_label.set_text("Predators: {0}%".format(predators_percentage))
             self.ill_fish_label.set_text("Sick fish: {0}".format(ill))
             self.speed_label.set_text("Speed: x{0}".format(self.slider.value))
 
@@ -18,6 +23,7 @@ class AquariumLabels(gui.Table):
         self.plancton_label = gui.Label("Plancton: 0", color=BLACK)
         self.male_fish_label = gui.Label("Male fish: 0", color=BLACK)
         self.female_fish_label = gui.Label("Female fish: 0", color=BLACK)
+        self.predator_fish_label = gui.Label("Predators: 0", color=BLACK)
         self.ill_fish_label = gui.Label("Ill fish: 0", color=BLACK)
         self.speed_label = gui.Label("Speed ", color=BLACK)
         self.slider = gui.HSlider(0, -10, 10, step=1, size=20, width=100, height=16, name='speed')
@@ -48,6 +54,8 @@ class AquariumLabels(gui.Table):
         self.tr()
         self.td(self.female_fish_label, align=-1)
 
+        self.tr()
+        self.td(self.predator_fish_label, align=-1)
 
         self.tr()
         self.td(self.ill_fish_label, align=-1)

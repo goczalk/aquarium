@@ -333,9 +333,14 @@ class Fish(pygame.sprite.Sprite):
             self.change_speed()
 
     def draw(self):
-        self.update()
-        self.draw_energy_indicators()
-        self.draw_hp_indicators()
+        # check if dead
+        if self.hp > 0:
+            self.update()
+            self.draw_energy_indicators()
+            self.draw_hp_indicators()
+        self.draw_circles_and_age()
+
+    def draw_circles_and_age(self):
         pygame.draw.circle(self.screen, self.get_colour(), (self.rect.x, self.rect.y), self.size)
         if self.is_predator:
             pygame.draw.circle(self.screen, GREY, (self.rect.x, self.rect.y), PREDATOR_SIGN_SIZE)
@@ -346,38 +351,35 @@ class Fish(pygame.sprite.Sprite):
         """
         Updates velocity, energy, health. Draws energy and health indicator.
         """
-        # check if dead
-        if self.hp > 0:
+        if self.fish_on_chasing_point():
+            self.choose_random_point_to_chase()
 
-            if self.fish_on_chasing_point():
-                self.choose_random_point_to_chase()
+        self.change_angle_to_chase()
+        self.calc_new_pos()
 
-            self.change_angle_to_chase()
-            self.calc_new_pos()
+        # TODO
+        # stuck on the edges horizontal
+        # TODO
+        # refactor code
+        if self.x > (1000 - self.rect.width):
+            self.x = 1000 - self.rect.width
+            self.init_vector()
+        elif self.x < 0:
+            self.x = 0
+            self.init_vector()
+        if self.y > (500 - self.rect.height):
+            self.y = 500 - self.rect.height
+            self.init_vector()
+        elif self.y < 0:
+            self.y = 0
+            self.init_vector()
+        self.rect.x = self.x
+        self.rect.y = self.y
 
-            # TODO
-            # stuck on the edges horizontal 
-            # TODO
-            # refactor code
-            if self.x > (1000 - self.rect.width):
-                self.x = 1000 - self.rect.width
-                self.init_vector()
-            elif self.x < 0:
-                self.x = 0
-                self.init_vector()
-            if self.y > (500 - self.rect.height):
-                self.y = 500 - self.rect.height
-                self.init_vector()
-            elif self.y < 0:
-                self.y = 0
-                self.init_vector()
-            self.rect.x = self.x
-            self.rect.y = self.y
-
-            self.decrease_energy()
-            self.change_speed_or_regenerate()
-            self.decrease_hp()
-            self.aging()
+        self.decrease_energy()
+        self.change_speed_or_regenerate()
+        self.decrease_hp()
+        self.aging()
 
     def decrease_energy(self):
         """
