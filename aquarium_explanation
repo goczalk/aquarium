@@ -42,11 +42,20 @@ Za większą prędkość poruszania się zabieramy więcej punktów energii.
 Nawet jeśli rybki normalnie nie byłoby stać na szybkie poruszanie się (ze względu na ograniczenie ENERGY_CHANGE_VELOCITY), jeśli spełnione są warunki do gonienia, zacznie ona gonić rybkę!
 Toż to przecież chodzi o przetrwanie! Jedynie przy energii równej MIN_ENERGY nie zrobi tego, będzie poruszać się z MIN_SPEED.
 
+UCIEKANIE PRZED INNYMI RYBKAMI
+Rybka ucieka przed każdym większym od siebie drapieżnikiem (niezależnie od ilości planktonu - przecież ona nie wie kiedy drapieżnik zaatakuje więc profilaktycznie ratuje łuski).
+Uciekanie jest identyczne do gonienia jeśli chodzi o mechanikę, punkt wybrany jest odbiciem predatora jednoczesnie w osi OX i OY.
+
 STARZENIE SIĘ RYBKI
 Rybka naturalnie "starzeje się" - podwyższany jest jej wiek (AGE) wraz z przemijającym czasem.
 W momencie gdy mienie FISH_YEAR jednostek czasu, rybka traci punkt życia.
-Starzenie się można przyspieszyć bądź zwolnić. Jeśli pod rząd przez SLOWER_FASTER_AGING_COUNTER jednostek czasu rybka utrzyma poziom HP poniżej/powyżej HP_FASTER_AGING/HP_SLOWER_AGING od ogólnego licznika "dni" w jednym roku odpowiednio jest dodawana bądź odejmowana wartość ADDITIONAL_FISH_YEAR. Co oznacza, że rybka się szybciej bądź wolniej starzeje.
-Ponieważ nie można "odmładzać się" oraz "postarzać" w nieskończoność, nawet jeśli stan energii będzie utrzymywał się przez dłuższy czas, zmienić w ten sposób swój wiek może tylko 3 (hardcoded) pod rząd. Jeśli w międzyczasie HP rybki na chwilę spadnie, a później wzrośnie - licznik się resetuje.
+Starzenie się można przyspieszyć bądź zwolnić. Jeśli pod rząd przez SLOWER_FASTER_AGING_COUNTER jednostek czasu rybka utrzyma poziom HP poniżej/powyżej HP_FASTER_AGING/HP_SLOWER_AGING
+rybka może zacząć starzeć się wolniej/szybciej.
+Od licznika "dni" w jednym FISH_YEAR odpowiednio jest dodawana bądź odejmowana wartość ADDITIONAL_FISH_YEAR. Co oznacza, że rybka się szybciej bądź wolniej starzeje.
+Na przykładzie człowieka: załóżmy, że człowiek A ma 35 HUMAN_YEARs i 60 "dni". Ponieważ odżywia się zdrowo i jego HP przez jakiś czas (na przykład 30 dni) jest na wysokim poziomie to
+niejako "odmładza się", więc odejmujemy od jego 'licznika wieku' na przykład 20 dni. W ten sposób traktujemy jakoby człowiek A miał 35 HUMAN_YEARs i 40 dni. Odmłodziliśmy go. W drogą stronę działa to analogicznie.
+Ponieważ nie można "odmładzać się" oraz "postarzać" w nieskończoność, nawet jeśli poziom HP będzie utrzymywał się na odpowiednim poziomie
+przez dłuższy czas, zmienić w ten sposób swój wiek można tylko 3 (hardcoded) razy pod rząd. Jeśli w międzyczasie HP rybki na chwilę spadnie, a później wzrośnie - licznik się resetuje.
 
 REGENERACJA RYBKI
 Rybka może "zdecydować" o próbie regeneracji swojego życia kosztem posiadanej energii.
