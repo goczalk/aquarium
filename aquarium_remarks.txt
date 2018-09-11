@@ -3,15 +3,6 @@ AKWARIUM UWAGI:
 3. Jeśli jedzenie nie zostanie zjedzone to zamienia się w nawóz -> wtedy mogą powstać rośliny.
 A zatem roślinożerne rybki mają więcej jedzenia.
 
-* pyt.3 Zasadniczo rybki mogą być roślinożerne albo wszystkożerne. Może wprowadzić jednak takie rozróżnienie, a nie "duża" i "mała"?
-Z tym że wtedy mógłby pojawić się problem, że wszystkożerne zeżrą te roślinożerne. Chociaż tu pojawia się inna kwestia:
-
-4. Rybki zasadniczo się nie zjadają jeśli nie brakuje im pożywienia.
-
-* pyt. 4 w takim przypadku trzebaby tak naprawdę przearanżować całe myślenie akwarium. Ale wydaje mi się, że warto skoro to ma być
-symulacja :) Z drugiej strony jeśli plankton będzie pojawiał się nieregularnie to może spowodować, że taka sytuacja, że będzie brakować żarcia
-pojawi się tylko co jakiś czas.
-
 * pyt.6 więc tak jak mówiłam, starzenie się można zostawić w ramach zmniejszenia siły czy szybkości rybki :D
 
 7. Zdecydowanie dla małych rybek przydałyby się kryjówki.
@@ -26,14 +17,6 @@ realistyczną symulację akwarium to wypadałoby to dodać, jednocześnie w praw
 
 10. Jeśli drapieżniki już walczą (np. walki o dominację - gdy jest tarło): to uszkadzają sobie płetwy.
 
-11. Może być taka sytuacja, że ryba niedrapieżna (podział drapieżne <-> niedrapieżne == roślnożerne <-> wszystkożerne) jest duża, a drapieżna
-mała i wtedy ta drapieżna nie jest zagrożeniem dla dużej, ale jest zagrożeniem dla narybku.
-
-13. Ryby raczej rozpoznają się, która jest drapieżna, a która niekoniecznie: czyli nie muszą uciekać przed każdą większą od siebie.
-Chociaż system dostrzegania szybciej rybki większej wydaje mi się, że może zostać.
-
-14. Ryby rosną cały czas - nie mają swojej jakiejś maksymalnej wielkości, o tyle że rosną coraz wolniej.
-
 15. Z wiekiem drapieżnik może być mniej sprawny więc już sobie nie upoluje jedzenia. (jeśli będzie musiał)
 
 
@@ -41,5 +24,3 @@ Chociaż system dostrzegania szybciej rybki większej wydaje mi się, że może 
 -albo można uzależnić szybkość regeneracji energii od poziomu najedzenia oraz wieku
 -im starsza rybka tym krócej może uciekać
 -podczas ruchu zużywana jest energia, a ile jest jej zużywane określa rozmiar rybki. Rybki mniejsze zużyją mniej energii na ruch, rybki większe zużywają jej więcej.
--POLE WIDZENIA zdecydowałam, że będzie takie samo dla każdej rybki, ale jak wiadomo większą rybkę lepiej widać z dużej odległości niż mniejszą.
--dlatego zdecydowałam, że podczas wyliczania tablicy z danymi "jak daleko, który obiekt jest ode mnie" będę brała pod uwagę wielkość tego obiektu więc ROZMIAR (plankton na przykład miały rozmiar 1), i w momencie gdy rybka będzie w odległości 1 od niego to może go zobaczyć , jeśli rybka ma rozmiar 4, jest na współrzędnej 10, to żeby ją zobaczyć inna rybka musi znaleźć się na współrzędnej 6 bądź 14. (czyli w odległości 4 od niej).

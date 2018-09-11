@@ -39,8 +39,8 @@ RADIANS_CHANGE = MAX_RADIANS_VALUE / 8
 """ FISH """
 FISH_START_NUM = 10
 
-DISEASE_DEADLINE = 3000  # number of units of screen refresh
-DISEASE_PROBABILITY = 99
+DISEASE_DEADLINE = 5000  # number of units of screen refresh
+DISEASE_PROBABILITY = 149
 
 """ /CONSTANTS """
 
@@ -295,7 +295,7 @@ def fish_is_smaller(fish, current_fish):
 
 
 def fish_is_bigger_predator(fish, current_fish):
-    if fish.size > current_fish.size:
+    if fish.is_predator and fish.size > current_fish.size:
         return True
     return False
 

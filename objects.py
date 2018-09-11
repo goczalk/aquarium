@@ -284,8 +284,19 @@ class Fish(pygame.sprite.Sprite):
 
         if self.escape_from_fish is not None:
             self.set_chasing_speed()
-            chased_point_x = self.escape_from_fish.x * (-1)
-            chased_point_y = self.escape_from_fish.y * (-1)
+            dx = self.x - self.escape_from_fish.x
+            dy = self.y - self.escape_from_fish.y
+
+            if dx > 0:
+                chased_point_x = self.x + dx
+            else:
+                chased_point_x = self.escape_from_fish.x * (-1)
+
+            if dy > 0:
+                chased_point_y = self.y + dy
+            else:
+                chased_point_y = self.escape_from_fish.y * (-1)
+
         elif self.chased_fish is not None:
             self.set_chasing_speed()
             chased_point_x = self.chased_fish.x
