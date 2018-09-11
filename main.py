@@ -171,9 +171,6 @@ def simulation_step():
         else:
             male_counter += 1
 
-        if fish.gender == "male":
-            fish.catch_disease()
-
         fish.draw()
         check_if_bumped_into_plancton(fish)
 

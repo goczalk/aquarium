@@ -26,9 +26,10 @@ PLANCTON_FRESHNESS = 500
 EGG_FRESHNESS = 500
 
 """ FISH """
-MIN_FISH_SIZE = 13
-MAX_FISH_SIZE = 18
-PREDATOR_SIGN_SIZE = 8
+INIT_MIN_FISH_SIZE = 8
+INIT_MAX_FISH_SIZE = 10
+GROWING_UP_SPEED_MIN = 1
+GROWING_UP_SPEED_MAX = 3
 
 FISH_YEAR = 200  # Number of units (frames) which has to pass to increase age
 
@@ -157,6 +158,7 @@ class Fish(pygame.sprite.Sprite):
     self.escape_from_fish - fish from which we should escape
     self.FONT - font for energy label
     self.gender - "male" or "female", chosen randomly on init
+    self.growing_up_speed - speed with which fish is growing
     self.hp - current healt points
     self.image - loaded image
     self.is_ill - boolean if has disease
@@ -178,6 +180,7 @@ class Fish(pygame.sprite.Sprite):
     self.hp_time_counter - counter of frames for fish aging
     self.reproduction_counter - counter of frames until last reproduction (laying or fertilizing)
     self.regeneration_counter - counter of frames when fish is regenerating
+    self.size_accumulator - accumulator for size
     self.slower_aging_counter - counter of energies in row for slower aging
     """
 
@@ -190,6 +193,7 @@ class Fish(pygame.sprite.Sprite):
         # self.image, self.rect = load_png('ball.png')
         self.randomize_gender()
         self.randomize_size()
+        self.randomize_growing_up_speed()
         self.randomize_predatory()
         xy = self._init_position()
 
@@ -220,6 +224,7 @@ class Fish(pygame.sprite.Sprite):
         self.reproduction_counter = 0
         self.dx_accumulator = 0
         self.dy_accumulator = 0
+        self.size_accumulator = 0
 
     def _init_position(self):
         self.x = random.randrange(SCREEN_WIDTH - self.size)
@@ -253,7 +258,10 @@ class Fish(pygame.sprite.Sprite):
             return self.colour
 
     def randomize_size(self):
-        self.size = random.randrange(MIN_FISH_SIZE, MAX_FISH_SIZE + 1)
+        self.size = random.randrange(INIT_MIN_FISH_SIZE, INIT_MAX_FISH_SIZE + 1)
+
+    def randomize_growing_up_speed(self):
+        self.growing_up_speed = random.randrange(GROWING_UP_SPEED_MIN, GROWING_UP_SPEED_MAX + 1)
 
     def fish_on_chasing_point(self):
         if abs(self.x - self.point_x) <= 10 and abs(self.y - self.point_y) <= 10:
@@ -343,7 +351,7 @@ class Fish(pygame.sprite.Sprite):
     def draw_circles_and_age(self):
         pygame.draw.circle(self.screen, self.get_colour(), (self.rect.x, self.rect.y), self.size)
         if self.is_predator:
-            pygame.draw.circle(self.screen, GREY, (self.rect.x, self.rect.y), PREDATOR_SIGN_SIZE)
+            pygame.draw.circle(self.screen, GREY, (self.rect.x, self.rect.y), int(self.size * 0.6))
         self.draw_age()
         # self.area = screen.get_rect()
 
@@ -447,6 +455,14 @@ class Fish(pygame.sprite.Sprite):
         if self.age_time_counter >= FISH_YEAR:
             self.age += 1
             self.age_time_counter = 0
+            self.grow_up()
+
+    def grow_up(self):
+        self.size_accumulator += self.growing_up_speed / self.age
+
+        if self.size_accumulator >= 1:
+            self.size += 1
+            self.size_accumulator -= 1
 
     def lay_eggs(self):
         """
@@ -484,10 +500,17 @@ class Fish(pygame.sprite.Sprite):
     def draw_energy_indicators(self):
         # render text
         energy_num_label = self.FONT.render("E" + str(math.floor(self.energy)), 1, BLACK)
-        x, y, width, height = self.rect
+        x, y, _, _ = self.rect
         x = x - self.size
-        y = y - self.size
-        y_label = y - height / 0.6
+
+        if y - self.size < 40:
+            y = y + self.size / 2 + 1
+            y_label = y + 6
+            y_rect = y + 19
+        else:
+            y = y - self.size / 2 - 1
+            y_label = y - 42
+            y_rect = y - 27
 
         # draw rect with energy
         energy_ratio = self.energy / MAX_ENERGY
@@ -495,10 +518,6 @@ class Fish(pygame.sprite.Sprite):
         Rgb = 255
         if energy_ratio > 0.5:
             Rgb = 255 - 255 * energy_ratio
-        y_rect = y - height
-        if y <= height / 0.8:
-            y_label = y + height * 1.8
-            y_rect = y + height * 2.4
 
         self.screen.blit(energy_num_label, (x, y_label))
         pygame.draw.rect(self.screen, (Rgb, 200, 0), (x, y_rect, label_width, LABEL_HEIGHT))
@@ -506,10 +525,17 @@ class Fish(pygame.sprite.Sprite):
     def draw_hp_indicators(self):
         # render text
         hp_num_label = self.FONT.render("HP" + str(self.hp), 1, BLACK)
-        x, y, width, height = self.rect
+        x, y, _, _ = self.rect
         x = x - self.size
-        y = y - self.size
-        y_label = y - height / 1.2
+
+        if y - self.size < 40:
+            y = y + self.size / 2 + 1
+            y_label = y + 24
+            y_rect = y + 37
+        else:
+            y = y - self.size / 2 - 1
+            y_label = y - 23
+            y_rect = y - 10
 
         # draw rect with hp
         hp_ratio = self.hp / MAX_HP
@@ -517,10 +543,6 @@ class Fish(pygame.sprite.Sprite):
         Rgb = 255
         if hp_ratio > 0.5:
             Rgb = 255 - 255 * hp_ratio
-        y_rect = y - height / 5
-        if y <= height / 0.8:
-            y_rect = y + height * 3.2
-            y_label = y + height * 2.5
 
         self.screen.blit(hp_num_label, (x, y_label))
         pygame.draw.rect(self.screen, (Rgb, 200, 0), (x, y_rect, label_width, LABEL_HEIGHT))

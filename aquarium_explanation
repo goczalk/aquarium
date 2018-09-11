@@ -18,12 +18,17 @@ Podczas tworzenia rybki:
 -przydzielane są punkty energii oraz zdrowia (health points - HP), odpowiednio MAX_ENERGY oraz MAX_HP
 -losowany jest wektor ruchu
 -liczby związane z rybką: E (energia), HP (punkty zdrowia), na środku rybki jest jej wiek w FISH_YEAR
+-losowana jest wielkość początkowa między INIT_MIN_FISH_SIZE, a INIT_MAX_FISH_SIZE oraz szybkość rośnięcie rybki
 -jeśli jest predatorem ma także szarą kropkę na środku
 
 JEDZENIE/ZDOBYWANIE ENERGII
 Każdorazowo jeśli rybka wpłynie na plankton otrzymuje ilość energii odpowiadająca rozmiarowi planktonu przemnożonego przez MULTIPLIER_FOR_FOOD.
 Oczywiście rybka nie może mieć energii większej niż MAX_ENERGY.
 Predatorzy mogą zjadać inne, mniejsze od siebie, rybki. Jeśli rybka zje rybkę, która była chora, sama zachorowuje.
+
+ROŚNIĘCIE RYBKI
+Rybki rosną w nieskończoność (tak jak w życiu) jednak coraz wolniej. Podczas tworzenia rybki losowana jest szybkość jej rośnięcia.
+Co jeden FISH_YEAR obliczana jest wartość ile rybka urosła, obliczamy ją na podstawie funkcji: y/x, gdzie x to wiek rybki, a y to szybkość rośnięcia rybki (wartość między GROWING_UP_SPEED_MIN a GROWING_UP_SPEED_MAX).
 
 PRĘDKOŚĆ RYBKI
 Prędkość poruszania się rybki zależy od jej energii. Powyżej/bądź równo z wartością ENERGY_CHANGE_VELOCITY rybka porusza się z prędkością MAX_SPEED, poniżej porusza się z prędkością MIN_SPEED.
