@@ -53,10 +53,7 @@ MIN_ENERGY = 1
 # MAX_ENERGY/2?
 ENERGY_CHANGE_VELOCITY = 0.3 * MAX_ENERGY
 
-# TODO
-# 'slow' speed: 1 move = 1 energy point?
-# 'fast' speed: 1 move = 2 energy point?
-ENERGY_POINT = 0.025
+ENERGY_POINT = 0.0025
 MAX_HUNGRY_TIME = 0.3 * FISH_YEAR
 MIN_ENERGY_HP_LOSE = 0.1 * MAX_ENERGY
 
@@ -402,12 +399,13 @@ class Fish(pygame.sprite.Sprite):
 
     def decrease_energy(self):
         """
-        When fish is moving faster it uses up more energy.
+        When fish is moving faster, it uses up more energy.
+        When fish is bigger, it uses up more energy.
         """
         if self.energy <= MIN_ENERGY:
             self.energy = MIN_ENERGY
             return
-        self.energy -= self.velocity * ENERGY_POINT
+        self.energy -= self.velocity * ENERGY_POINT * self.size
 
     def decrease_hp(self):
         """

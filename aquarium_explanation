@@ -34,7 +34,10 @@ PRĘDKOŚĆ RYBKI
 Prędkość poruszania się rybki zależy od jej energii. Powyżej/bądź równo z wartością ENERGY_CHANGE_VELOCITY rybka porusza się z prędkością MAX_SPEED, poniżej porusza się z prędkością MIN_SPEED.
 
 PORUSZANIE SIĘ RYBKI
-Każdy ruch rybki kosztuje ją ENERGY_POINT, jeśli rybka porusza się szybko, odbierany jest jej dodatkowy ADDITIONAL_ENERGY_POINT. Energia rybki nie może spaść poniżej MIN_ENERGY.
+Każdy ruch rybki kosztuje ją ENERGY_POINT przemnożony przez jej prędkość i rozmiar.
+Oznacza to, że rybka zużywa więcej energii jeśli porusza się szybciej i im większa (więc jednocześnie i starsza) jest.
+[Tutaj rozwiązujemy problem, że rybka starsza może krócej uciekać/gonić -> im starsza tym większa więc straci więcej energii więc krócej będzie mogła uciekać.]
+Energia rybki nie może spaść poniżej MIN_ENERGY.
 Jeśli rybka niczego nie goni, ani nie ucieka, porusza się próbując wpłynąc na punkt, który jest dla niej losowany.
 Drapieżne rybki zjadają mniejsze rybki otrzymując analogiczną ilość energii.
 
