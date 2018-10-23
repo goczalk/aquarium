@@ -2,7 +2,8 @@
 File with main function
 """
 
-from objects import Fish, Plancton, FISH_YEAR, MAX_FISH_VISION, VISION_MULTIPLIER, is_in_vision, calculate_distance
+from objects import Fish, Plancton, FISH_YEAR, MAX_FISH_VISION, VISION_MULTIPLIER, is_in_vision, calculate_distance, \
+    Shelter
 from AquariumLabels import AquariumLabels
 import pygame
 from pygame.locals import *
@@ -13,6 +14,7 @@ import math
 import time
 
 from speed import Speed
+
 
 """ CONSTANTS """
 
@@ -26,6 +28,8 @@ MAX_ACCUMULATED_TIME = 1.0
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 500
 
+SHELTERS_START_NUM = 3
+
 """ PLANCTON """
 PLANCTON_START_NUM = 50
 PLANCTON_TIMER = 360
@@ -37,7 +41,7 @@ MAX_RADIANS_VALUE = 180 * 0.017
 RADIANS_CHANGE = MAX_RADIANS_VALUE / 8
 
 """ FISH """
-FISH_START_NUM = 10
+FISH_START_NUM = 4
 
 DISEASE_DEADLINE = 5000  # number of units of screen refresh
 DISEASE_PROBABILITY = 149
@@ -56,6 +60,9 @@ eggs_list = []
 plancton_list = []
 plancton_add_counter = 0
 plancton_random_range_radians = 0
+
+# list of shelters
+shelters_list = []
 
 application = None
 screen = None
@@ -124,9 +131,13 @@ def initialize():
     for _ in range(PLANCTON_START_NUM):
         plancton_list.append(Plancton())
 
+    global shelters_list
+    for _ in range(SHELTERS_START_NUM):
+        shelters_list.append(Shelter())
+
 
 def simulation_step():
-    global fish_list, fishsprite_list, eggs_list, plancton_list, plancton_add_counter, \
+    global fish_list, fishsprite_list, eggs_list, plancton_list, shelters_list, plancton_add_counter, \
         plancton_random_range_radians, application, screen, background, aqLabel, \
         time_unit_counter, fish_year_passed
 
@@ -149,10 +160,11 @@ def simulation_step():
     plancton_random_range_radians = generate_additional_plancton(plancton_add_counter, plancton_list,
                                                                  plancton_random_range_radians)
 
-    remove_dead_fish_from_list(fish_list)
+    remove_dead_fish_from_list()
     for dead_fish in dead_fish_list:
         dead_fish.draw_circles_and_age()
 
+    check_which_fish_in_shelter()
     # TODO
     # czy dobry taki warunek? czy rybka może wiedzieć ile w CAŁYM AKWARIUM jest jedzenia?
     set_fish_chasing_each_other()
@@ -192,13 +204,27 @@ def simulation_step():
     eggs_list = check_freshness_and_draw(eggs_list)
     plancton_list = check_freshness_and_draw(plancton_list)
 
+    # TODO
+    # shorter for loop?
+    for shelter in shelters_list:
+        shelter.draw()
+
     # For labels and sliders
     application.paint()
 
     pygame.display.flip()
 
 
-def remove_dead_fish_from_list(fish_list):
+def check_which_fish_in_shelter():
+    for shelter in shelters_list:
+        for fish in fish_list:
+            if shelter.rect.contains(fish.rect):
+                fish.in_shelter = True
+            else:
+                fish.in_shelter = False
+
+
+def remove_dead_fish_from_list():
     for fish in list(fish_list):
         if fish.hp <= 0:
             dead_fish_list.append(fish)
@@ -257,7 +283,7 @@ def set_fish_chasing_each_other():
     if len(plancton_list) <= HUNGER_PLANCTON_LIMIT:
         for fish in fish_list:
             if fish.is_predator:
-                closest_fish = get_closest_appropriate_fish_in_sight(fish, fish_is_smaller)
+                closest_fish = get_closest_appropriate_fish_in_sight(fish, fish_is_smaller_and_not_in_shelter)
                 fish.set_chased_fish(closest_fish)
     else:
         for fish in fish_list:
@@ -267,6 +293,8 @@ def set_fish_chasing_each_other():
 def set_fish_escaping_from_each_other():
     global plancton_list, fish_list
     for fish in fish_list:
+        if fish.in_shelter:
+            continue
         closest_fish = get_closest_appropriate_fish_in_sight(fish, fish_is_bigger_predator)
         fish.set_escape_from_fish(closest_fish)
 
@@ -288,8 +316,8 @@ def get_closest_appropriate_fish_in_sight(current_fish, size_relation_func):
     return fish_list[index]
 
 
-def fish_is_smaller(fish, current_fish):
-    if fish.is_predator and fish.size < current_fish.size:
+def fish_is_smaller_and_not_in_shelter(fish, current_fish):
+    if not fish.in_shelter and fish.size < current_fish.size:
         return True
     return False
 

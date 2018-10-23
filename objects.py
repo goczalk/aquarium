@@ -12,6 +12,7 @@ import pygame
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREY = 0x808080
+SANDY = 0xfffcbb
 
 """ SCREEN """
 SCREEN_WIDTH = 1000
@@ -24,6 +25,10 @@ PLANCTON_FRESHNESS = 500
 
 """ EGG """
 EGG_FRESHNESS = 500
+
+""" SHELTER """
+SHELTER_MIN_DIMEN = 20
+SHELTER_MAX_DIMEN = 80
 
 """ FISH """
 INIT_MIN_FISH_SIZE = 8
@@ -145,6 +150,22 @@ class Egg:
         pygame.draw.circle(self.screen, 0xff9933, self.xy, self.radius)
 
 
+class Shelter:
+    """
+    self.rect - Rectangle object
+    self.screen - screen to display on
+    """
+    def __init__(self):
+        width = random.randrange(SHELTER_MIN_DIMEN, SHELTER_MAX_DIMEN)
+        height = random.randrange(SHELTER_MIN_DIMEN, SHELTER_MAX_DIMEN)
+        x = random.randrange(SCREEN_WIDTH - width)
+        y = random.randrange(SCREEN_HEIGHT - height)
+        self.rect = pygame.Rect(x, y, width, height)
+        self.screen = pygame.display.get_surface()
+
+    def draw(self):
+        pygame.draw.rect(self.screen, SANDY, self.rect, 5)
+
 class Fish(pygame.sprite.Sprite):
     """
     self.angle - int for angle
@@ -158,6 +179,7 @@ class Fish(pygame.sprite.Sprite):
     self.growing_up_speed - speed with which fish is growing
     self.hp - current healt points
     self.image - loaded image
+    self.in_shelter - boolean if fish is in shelter
     self.is_ill - boolean if has disease
     self.is_predator - boolean if is predator
     self.moves_fast - boolean, true when fish is moving fast
@@ -202,6 +224,7 @@ class Fish(pygame.sprite.Sprite):
         self.set_colour()
         self.is_ill = False
 
+        self.in_shelter = False
         self.chased_fish = None
         self.escape_from_fish = None
         self.init_vector()
@@ -209,6 +232,7 @@ class Fish(pygame.sprite.Sprite):
         self.screen = pygame.display.get_surface()
 
         self._init_counters()
+
 
     def _init_counters(self):
         self.age_time_counter = 0
@@ -472,6 +496,7 @@ class Fish(pygame.sprite.Sprite):
         if self.size_accumulator >= 1:
             self.size += 1
             self.size_accumulator -= 1
+            self.rect = pygame.Rect((self.rect.x, self.rect.y), (self.size, self.size))
 
     def lay_eggs(self):
         """

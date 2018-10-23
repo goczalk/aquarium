@@ -58,6 +58,11 @@ UCIEKANIE PRZED INNYMI RYBKAMI
 Rybka ucieka przed każdym większym od siebie drapieżnikiem (niezależnie od ilości planktonu - przecież ona nie wie kiedy drapieżnik zaatakuje więc profilaktycznie ratuje łuski).
 Uciekanie jest identyczne do gonienia jeśli chodzi o mechanikę, punkt wybrany jest odbiciem predatora jednoczesnie w osi OX i OY.
 
+SCHRONIENIE
+Schronienia są przestrzeniami, w których rybka jest bezpieczna. Oznaczone są poprzez piaskową ramkę.
+Ilość schronień jest ustalona poprzez SHELTERS_START_NUM, a ich rozmiar jest losowany z przedziału <SHELTER_MIN_DIMEN;SHELTER_MAX_DIMEN). Mogą pojawić się w losowym miejscu.
+Rybka postrzegana jest jako 'w schronieniu' jeśli znajduje się w nim cała, nie jest wtedy widoczna dla innych rybek.
+
 STARZENIE SIĘ RYBKI
 Rybka naturalnie "starzeje się" - podwyższany jest jej wiek (AGE) wraz z przemijającym czasem.
 W momencie gdy mienie FISH_YEAR jednostek czasu, rybka traci punkt życia.
