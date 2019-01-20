@@ -45,7 +45,7 @@ GONIENIE INNYCH RYBEK
 Rybka jest w stanie gonić inne rybki jeśli jest predatorem. Prawdopodobieństwo bycia predatorem to 1/3.
 Predator oznaczany jest poprzez szarą kropkę na środku swojego ciała.
 Ponieważ rybki nie zjadają swoich pobratymców jeśli nie muszą, gonienie innej rybki następuje tylko gdy w akwarium
-jest za mało pożywienia (mniej niż HUNGER_PLANCTON_LIMIT).
+jest za mało pożywienia. Limit zależy od ilości rybek, jeśli będzie mniej niż MIN_PLANCTON_NUM_PER_FISH_NOT_HUNGRY planktonu na rybkę, drapieżniki zaczną atakować. 
 Gonić mogą tylo drapieżne rybki gdyż tylko one mogą zjeść inną rybkę.
 Rybka zacznie gonić najbliższą rybkę, którą dostrzeże i która jest mniejsza od niej. Zasięg wzroku rybki zależy od wielkości rybki, rybki większe łatwiej jest zauważyć niż mniejsze.
 Aby uzyskać wartość zasięgu wzroku mnożymy rozmiar potencjalnego celu przez VISION_MULTIPLIER. Zasięg wzroku nie może być większy niż MAX_FISH_VISION.

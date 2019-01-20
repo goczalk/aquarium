@@ -1,0 +1,785 @@
+========= RANDOMIZED ===========
+
+Trial 1
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:3
+Finished after: 176 steps
+
+Average fish num: 4.6
+Trial 2
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:3
+Finished after: 545 steps
+
+Average fish num: 6.4
+Trial 3
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:3
+Finished after: 229 steps
+
+Average fish num: 23.3
+Trial 1
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:4
+Finished after: 1263 steps
+
+Average fish num: 18.8
+Trial 2
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:4
+Finished after: 1022 steps
+
+Average fish num: 29.2
+Trial 3
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:4
+Finished after: 500 steps
+
+Average fish num: 63.7
+
+
+###### poniżej: za duzo ich było => koło 70 aktywnych rybek, na ~400 lat
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:5
+
+
+
+
+========= NOT RANDOMIZED ===========
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:3
+Finished after: 480 steps
+Average fish num: 5.0
+
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:4
+Finished after: 790 steps
+Average fish num: 15.6
+
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:5
+=== skończyła się błedem o foncie; około 1300 sytepów? około 50 osóbników ciągle
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:6
+=== przerwana przeze mnie -> 120 rybek, 210 stepów na pewno
+
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:300
+energy_point:0.002
+multiplier_for_food:3
+Finished after: 112 steps
+Average fish num: 134.1
+
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:300
+energy_point:0.002
+multiplier_for_food:4
+Finished after: 383 steps
+Average fish num: 45.6
+
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:300
+energy_point:0.002
+multiplier_for_food:5
+Finished after: 945 steps
+Average fish num: 28.1
+
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:300
+energy_point:0.002
+multiplier_for_food:6
+=== skończyła się błedem o foncie; 
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:300
+energy_point:0.0025
+multiplier_for_food:3
+Finished after: 83 steps
+Average fish num: 6.0
+
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:300
+energy_point:0.0025
+multiplier_for_food:4
+Finished after: 155 steps
+Average fish num: 8.2
+
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:300
+energy_point:0.0025
+multiplier_for_food:5
+Finished after: 261 steps
+Average fish num: 10.3
+
+
+Simulation run with:
+plancton_max_to_add:90
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:3
+Finished after: 410 steps
+Average fish num: 10.4
+
+
+Simulation run with:
+plancton_max_to_add:90
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:4
+=== skończyła się błedem o foncie;
+
+Simulation run with:
+plancton_max_to_add:90
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:5
+=== skończyła się błedem o foncie;
+
+Simulation run with:
+plancton_max_to_add:100
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:3
+Finished after: 800 steps
+Average fish num: 5.0
+
+
+Simulation run with:
+plancton_max_to_add:100
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:4
+=== skończyła się błedem o foncie;
+
+Simulation run with:
+plancton_max_to_add:100
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:5
+=== skończyła się błedem o foncie;
+
+Simulation run with:
+plancton_max_to_add:110
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:4
+=== po 462 iteracjach zatrzymalam. okolo 130 rybek aktywnych
+
+Simulation run with:
+plancton_max_to_add:110
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:4
+=== po 200, 200 osobnikow
+
+
+!!!!!!!!!!!!!!!!!!!
+Simulation run with:
+plancton_max_to_add:110
+plancton_timer:300
+energy_point:0.002
+multiplier_for_food:4
+== 1500 -> ~15 osobników ; 1600 -> ~30; 1800 -> ~30; 3100 -> 15
+!!!!!!!
+
+
+Simulation run with:
+plancton_max_to_add:110
+plancton_timer:300
+energy_point:0.002
+multiplier_for_food:5
+=== skończyła się błedem o foncie; po 60 osobnikow?
+
+Simulation run with:
+plancton_max_to_add:110
+plancton_timer:300
+energy_point:0.0025
+multiplier_for_food:3
+Finished after: 126 steps
+Average fish num: 6.9
+
+
+Simulation run with:
+plancton_max_to_add:110
+plancton_timer:300
+energy_point:0.0025
+multiplier_for_food:4
+Finished after: 162 steps
+Average fish num: 8.6
+
+
+Simulation run with:
+plancton_max_to_add:110
+plancton_timer:300
+energy_point:0.0025
+multiplier_for_food:5
+==== 1300 i okolo 15 osobników?; bład fonta
+
+Simulation run with:
+plancton_max_to_add:120
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:3
+==== 1310, 40-50 osobnikow; 2000 ~30; 2250 ~30-50; pierdolnęło??
+
+
+Simulation run with:
+plancton_max_to_add:120
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:4
+==== 600 -> 140 osobników; zamkniete
+
+Simulation run with:
+plancton_max_to_add:120
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:5
+==== font error
+
+Simulation run with:
+plancton_max_to_add:120
+plancton_timer:300
+energy_point:0.002
+multiplier_for_food:3
+Finished after: 484 steps
+Average fish num: 5.6
+
+~~~ added try catch
+Simulation run with:
+plancton_max_to_add:120
+plancton_timer:300
+energy_point:0.002
+multiplier_for_food:4
+EXCEPTION
+unable to read font file '/usr/share/fonts/truetype/freefont/FreeMono.ttf'
+Finished after: 2429 steps
+Average fish num: 43.3
+
+
+
+
+
+???????????????????????? NIEKROTE WYNIKI AVERAGE FISH Z DUPY
+Simulation run with:
+plancton_max_to_add:110
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:3
+
+Simulation run with:
+plancton_max_to_add:110
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:4
+
+Simulation run with:
+plancton_max_to_add:110
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:5
+
+Simulation run with:
+plancton_max_to_add:110
+plancton_timer:300
+energy_point:0.002
+multiplier_for_food:3
+
+Simulation run with:
+plancton_max_to_add:110
+plancton_timer:300
+energy_point:0.002
+multiplier_for_food:4
+
+Simulation run with:
+plancton_max_to_add:110
+plancton_timer:300
+energy_point:0.002
+multiplier_for_food:5
+
+Simulation run with:
+plancton_max_to_add:110
+plancton_timer:300
+energy_point:0.0025
+multiplier_for_food:3
+
+Simulation run with:
+plancton_max_to_add:110
+plancton_timer:300
+energy_point:0.0025
+multiplier_for_food:4
+
+Simulation run with:
+plancton_max_to_add:110
+plancton_timer:300
+energy_point:0.0025
+multiplier_for_food:5
+
+Simulation run with:
+plancton_max_to_add:120
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:3
+
+Simulation run with:
+plancton_max_to_add:120
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:4
+
+Simulation run with:
+plancton_max_to_add:120
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:5
+
+Simulation run with:
+plancton_max_to_add:120
+plancton_timer:300
+energy_point:0.002
+multiplier_for_food:3
+Finished after: 484 steps
+Average fish num: 5.4
+
+
+Simulation run with:
+plancton_max_to_add:120
+plancton_timer:300
+energy_point:0.002
+multiplier_for_food:4
+EXCEPTION
+unable to read font file '/usr/share/fonts/truetype/freefont/FreeMono.ttf'
+Finished after: 2429 steps
+Average fish num: 43.3
+
+
+Simulation run with:
+plancton_max_to_add:120
+plancton_timer:300
+energy_point:0.002
+multiplier_for_food:5
+EXCEPTION
+unable to read font file '/usr/share/fonts/truetype/freefont/FreeMono.ttf'
+Finished after: 1053 steps
+Average fish num: 175.3
+
+
+Simulation run with:
+plancton_max_to_add:120
+plancton_timer:300
+energy_point:0.0025
+multiplier_for_food:3
+Finished after: 166 steps
+Average fish num: 1121.2
+
+
+Simulation run with:
+plancton_max_to_add:120
+plancton_timer:300
+energy_point:0.0025
+multiplier_for_food:4
+Finished after: 411 steps
+Average fish num: 459.5
+
+
+Simulation run with:
+plancton_max_to_add:120
+plancton_timer:300
+energy_point:0.0025
+multiplier_for_food:5
+EXCEPTION
+unable to read font file '/usr/share/fonts/truetype/freefont/FreeMono.ttf'
+Finished after: 2131 steps
+Average fish num: 134.9
+
+
+Simulation run with:
+plancton_max_to_add:130
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:3
+Finished after: 3104 steps
+Average fish num: 128.9
+
+
+Simulation run with:
+plancton_max_to_add:130
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:4
+EXCEPTION
+unable to read font file '/usr/share/fonts/truetype/freefont/FreeMono.ttf'
+Finished after: 633 steps
+Average fish num: 750.6
+
+
+Simulation run with:
+plancton_max_to_add:130
+plancton_timer:300
+energy_point:0.0015
+multiplier_for_food:5
+EXCEPTION
+unable to read font file '/usr/share/fonts/truetype/freefont/FreeMono.ttf'
+Finished after: 359 steps
+Average fish num: 1500.9
+
+
+Simulation run with:
+plancton_max_to_add:130
+plancton_timer:300
+energy_point:0.002
+multiplier_for_food:3
+Finished after: 1560 steps
+Average fish num: 356.3
+
+
+Simulation run with:
+plancton_max_to_add:130
+plancton_timer:300
+energy_point:0.002
+multiplier_for_food:4
+EXCEPTION
+unable to read font file '/usr/share/fonts/truetype/freefont/FreeMono.ttf'
+Finished after: 1727 steps
+Average fish num: 373.0
+
+
+Simulation run with:
+plancton_max_to_add:130
+plancton_timer:300
+energy_point:0.002
+multiplier_for_food:5
+EXCEPTION
+unable to read font file '/usr/share/fonts/truetype/freefont/FreeMono.ttf'
+Finished after: 892 steps
+Average fish num: 812.1
+
+
+Simulation run with:
+plancton_max_to_add:130
+plancton_timer:300
+energy_point:0.0025
+multiplier_for_food:3
+Finished after: 177 steps
+Average fish num: 4097.7
+
+
+Simulation run with:
+plancton_max_to_add:130
+plancton_timer:300
+energy_point:0.0025
+multiplier_for_food:4
+Finished after: 3167 steps
+Average fish num: 250.4
+
+
+Simulation run with:
+plancton_max_to_add:130
+plancton_timer:300
+energy_point:0.0025
+multiplier_for_food:5
+EXCEPTION
+unable to read font file '/usr/share/fonts/truetype/freefont/FreeMono.ttf'
+Finished after: 1996 steps
+Average fish num: 447.2
+
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:330
+energy_point:0.0015
+multiplier_for_food:3
+Finished after: 173 steps
+Average fish num: 5162.7
+
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:330
+energy_point:0.0015
+multiplier_for_food:4
+Finished after: 258 steps
+Average fish num: 3466.5
+
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:330
+energy_point:0.0015
+multiplier_for_food:5
+EXCEPTION
+unable to read font file '/usr/share/fonts/truetype/freefont/FreeMono.ttf'
+Finished after: 1899 steps
+Average fish num: 520.2
+
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:330
+energy_point:0.002
+multiplier_for_food:3
+Finished after: 153 steps
+Average fish num: 6460.7
+
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:330
+energy_point:0.002
+multiplier_for_food:4
+Finished after: 171 steps
+Average fish num: 5785.8
+
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:330
+energy_point:0.002
+multiplier_for_food:5
+Finished after: 489 steps
+Average fish num: 2029.2
+
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:330
+energy_point:0.0025
+multiplier_for_food:3
+Finished after: 91 steps
+Average fish num: 10910.2
+
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:330
+energy_point:0.0025
+multiplier_for_food:4
+Finished after: 128 steps
+Average fish num: 7762.7
+
+
+Simulation run with:
+plancton_max_to_add:80
+plancton_timer:330
+energy_point:0.0025
+multiplier_for_food:5
+Finished after: 156 steps
+Average fish num: 6377.5
+
+
+Simulation run with:
+plancton_max_to_add:90
+plancton_timer:330
+energy_point:0.0015
+multiplier_for_food:3
+Finished after: 329 steps
+Average fish num: 3028.0
+
+
+Simulation run with:
+plancton_max_to_add:90
+plancton_timer:330
+energy_point:0.0015
+multiplier_for_food:4
+Finished after: 1846 steps
+Average fish num: 561.8
+
+
+Simulation run with:
+plancton_max_to_add:90
+plancton_timer:330
+energy_point:0.0015
+multiplier_for_food:5
+EXCEPTION
+unable to read font file '/usr/share/fonts/truetype/freefont/FreeMono.ttf'
+Finished after: 1276 steps
+Average fish num: 881.4
+
+
+Simulation run with:
+plancton_max_to_add:90
+plancton_timer:330
+energy_point:0.002
+multiplier_for_food:3
+Finished after: 119 steps
+Average fish num: 9455.6
+
+
+Simulation run with:
+plancton_max_to_add:90
+plancton_timer:330
+energy_point:0.002
+multiplier_for_food:4
+Finished after: 227 steps
+Average fish num: 4963.3
+
+
+Simulation run with:
+plancton_max_to_add:90
+plancton_timer:330
+energy_point:0.002
+multiplier_for_food:5
+Finished after: 1473 steps
+Average fish num: 783.3
+
+
+Simulation run with:
+plancton_max_to_add:90
+plancton_timer:330
+energy_point:0.0025
+multiplier_for_food:3
+Finished after: 84 steps
+Average fish num: 13742.6
+
+
+Simulation run with:
+plancton_max_to_add:90
+plancton_timer:330
+energy_point:0.0025
+multiplier_for_food:4
+Finished after: 209 steps
+Average fish num: 5527.7
+
+
+Simulation run with:
+plancton_max_to_add:90
+plancton_timer:330
+energy_point:0.0025
+multiplier_for_food:5
+Finished after: 312 steps
+Average fish num: 3706.0
+
+
+Simulation run with:
+plancton_max_to_add:100
+plancton_timer:330
+energy_point:0.0015
+multiplier_for_food:3
+Finished after: 642 steps
+Average fish num: 1806.8
+
+
+Simulation run with:
+plancton_max_to_add:100
+plancton_timer:330
+energy_point:0.0015
+multiplier_for_food:4
+EXCEPTION
+unable to read font file '/usr/share/fonts/truetype/freefont/FreeMono.ttf'
+Finished after: 2358 steps
+Average fish num: 535.5
+
+
+Simulation run with:
+plancton_max_to_add:100
+plancton_timer:330
+energy_point:0.0015
+multiplier_for_food:5
+EXCEPTION
+unable to read font file '/usr/share/fonts/truetype/freefont/FreeMono.ttf'
+Finished after: 855 steps
+Average fish num: 1566.5
+
+
+Simulation run with:
+plancton_max_to_add:100
+plancton_timer:330
+energy_point:0.002
+multiplier_for_food:3
+Finished after: 181 steps
+Average fish num: 7404.7
+
+
+Simulation run with:
+plancton_max_to_add:100
+plancton_timer:330
+energy_point:0.002
+multiplier_for_food:4
+Finished after: 699 steps
+Average fish num: 1923.9
+
+
+Simulation run with:
+plancton_max_to_add:100
+plancton_timer:330
+energy_point:0.002
+multiplier_for_food:5
+EXCEPTION
+unable to read font file '/usr/share/fonts/truetype/freefont/FreeMono.ttf'
+Finished after: 2789 steps
+Average fish num: 519.7
+
+
+Simulation run with:
+plancton_max_to_add:100
+plancton_timer:330
+energy_point:0.0025
+multiplier_for_food:3
+Finished after: 89 steps
+Average fish num: 16289.9
+
+
+Simulation run with:
+plancton_max_to_add:100
+plancton_timer:330
+energy_point:0.0025
+multiplier_for_food:4
+Finished after: 230 steps
+Average fish num: 6308.2

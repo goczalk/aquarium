@@ -58,7 +58,7 @@ MIN_ENERGY = 1
 # MAX_ENERGY/2?
 ENERGY_CHANGE_VELOCITY = 0.3 * MAX_ENERGY
 
-ENERGY_POINT = 0.0025
+ENERGY_POINT = 0.002
 MAX_HUNGRY_TIME = 0.3 * FISH_YEAR
 MIN_ENERGY_HP_LOSE = 0.1 * MAX_ENERGY
 
@@ -74,24 +74,23 @@ ADDITIONAL_FISH_YEAR = 0.1 * FISH_YEAR  # health is decreasing (10%) faster or s
 """ Regeneration """
 HP_REGENERATION_POSSIBLE = 0.9 * MAX_HP
 ENERGY_REGENERATION_POSSIBLE = 0.8 * MAX_ENERGY
-REGENERATION_CYCLE = 20  # number of units fish has to wait for regeneration
+REGENERATION_CYCLE = 40  # number of units fish has to wait for regeneration
 ENERGY_REGENERATION_COST = 0.1 * MAX_ENERGY
 
 """ Reproduction  """
 LAYING_EGG_PROBABILITY = 1  # Probability of laying eggs is 1/(LAYING_EGG_PROBABILITY+1)
 # if const is 3 -> probability is 25%
 HP_REPRODUCTION_POSSIBLE = 0.25 * MAX_HP
-ENERGY_REPRODUCTION_POSSIBLE = 0.5 * MAX_ENERGY
+ENERGY_REPRODUCTION_POSSIBLE = 0.3 * MAX_ENERGY
 REPRODUCTION_POSSIBLE = 300  # Minimum number of time units between each reproduction
 ENERGY_REPRODUCTION_COST = 0.2 * MAX_ENERGY
-NEW_FISH_NUM = 1
 
 """ Constants describing width and height of rectangle of energy/hp """
 LABEL_HEIGHT = 5
 LABEL_WIDTH = 30
 
 """ Multiplier for increasing food value """
-MULTIPLIER_FOR_FOOD = 5
+MULTIPLIER_FOR_FOOD = 4
 
 
 class Plancton:
@@ -203,7 +202,11 @@ class Fish(pygame.sprite.Sprite):
     self.slower_aging_counter - counter of energies in row for slower aging
     """
 
-    def __init__(self):
+    def __init__(self, energy_point=None, multiplier_for_food=None):
+        """
+        :param energy_point: for configuration tests, changing global
+        :param multiplier_for_food: for configuration tests, changing global
+        """
         # pygame.sprite.Sprite.__init__(self)
 
         # initilize font
@@ -233,6 +236,13 @@ class Fish(pygame.sprite.Sprite):
 
         self._init_counters()
 
+        #### for configuration tests
+        if energy_point:
+            global ENERGY_POINT
+            ENERGY_POINT = energy_point
+        if multiplier_for_food:
+            global MULTIPLIER_FOR_FOOD
+            MULTIPLIER_FOR_FOOD = multiplier_for_food
 
     def _init_counters(self):
         self.age_time_counter = 0

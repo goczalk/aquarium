@@ -2,19 +2,17 @@
 File with main function
 """
 
-from objects import Fish, Plancton, FISH_YEAR, MAX_FISH_VISION, VISION_MULTIPLIER, is_in_vision, calculate_distance, \
-    Shelter
-from AquariumLabels import AquariumLabels
-import pygame
-from pygame.locals import *
-from pgu import gui
-
-import random
 import math
+import random
 import time
 
-from speed import Speed
+import pygame
+from pgu import gui
+from pygame.locals import *
 
+from AquariumLabels import AquariumLabels
+from objects import Fish, Plancton, FISH_YEAR, is_in_vision, calculate_distance, Shelter
+from speed import Speed
 
 """ CONSTANTS """
 
@@ -30,21 +28,24 @@ SCREEN_HEIGHT = 500
 
 SHELTERS_START_NUM = 3
 
+""" FISH """
+FISH_START_NUM = 10
+
 """ PLANCTON """
 PLANCTON_START_NUM = 50
-PLANCTON_TIMER = 360
-PLANCTON_MAX_TO_ADD = 80
-HUNGER_PLANCTON_LIMIT = PLANCTON_MAX_TO_ADD * 0.6
+PLANCTON_TIMER = 300
+PLANCTON_MAX_TO_ADD = 110
+# if there will be less than 5 planctons per fish, hunters gonna hunt
+MIN_PLANCTON_NUM_PER_FISH_NOT_HUNGRY = 5
 
 MAX_RADIANS_VALUE = 180 * 0.017
-# how many radians are added to random range max to calculate sinus of how much plancton will be produced. bigger the division, slower the sinusoidal func will go
+# how many radians are added to random range max to calculate sinus of how much plancton will be produced.
+# bigger the division, slower the sinusoidal func will go
 RADIANS_CHANGE = MAX_RADIANS_VALUE / 8
 
-""" FISH """
-FISH_START_NUM = 4
-
-DISEASE_DEADLINE = 5000  # number of units of screen refresh
-DISEASE_PROBABILITY = 149
+""" DISEASE """
+DISEASE_DEADLINE = 75 * FISH_YEAR  # number of units of screen refresh
+DISEASE_PROBABILITY = 251
 
 """ /CONSTANTS """
 
@@ -52,6 +53,7 @@ DISEASE_PROBABILITY = 149
 fish_list = []
 fishsprite_list = []
 dead_fish_list = []
+fish_sum = 0 # for average purposes
 
 # list of fish eggs
 eggs_list = []
@@ -74,7 +76,7 @@ fish_year_passed = 1
 disease_counter = 0
 
 
-def main():
+def run_simulation():
     initialize()
 
     last_update = time.clock()
@@ -100,7 +102,41 @@ def main():
             accumulator -= TIME_STEP
 
 
-def initialize():
+def init_global_variables():
+    global fish_list, fishsprite_list, dead_fish_list, eggs_list, plancton_list, plancton_add_counter,\
+        plancton_random_range_radians, shelters_list, application, screen, background, aqLabel, time_unit_counter,\
+        fish_year_passed, disease_counter
+
+    # list of fish
+    fish_list = []
+    fishsprite_list = []
+    dead_fish_list = []
+    fish_sum = 0
+
+    # list of fish eggs
+    eggs_list = []
+
+    # list of generatated plancton objects
+    plancton_list = []
+    plancton_add_counter = 0
+    plancton_random_range_radians = 0
+
+    # list of shelters
+    shelters_list = []
+
+    application = None
+    screen = None
+    background = None
+    aqLabel = None
+
+    time_unit_counter = 0
+    fish_year_passed = 1
+    disease_counter = 0
+
+
+def initialize(plancton_max_to_add=None, plancton_timer=None, energy_point=None, multiplier_for_food=None):
+    init_global_variables()
+
     pygame.init()
     size = [SCREEN_WIDTH, SCREEN_HEIGHT]
     global screen
@@ -125,7 +161,10 @@ def initialize():
 
     global fish_list
     for _ in range(FISH_START_NUM):
-        fish_list.append(Fish())
+        if energy_point:
+            fish_list.append(Fish(energy_point, multiplier_for_food))
+        else:
+            fish_list.append(Fish())
 
     global plancton_list
     for _ in range(PLANCTON_START_NUM):
@@ -135,11 +174,22 @@ def initialize():
     for _ in range(SHELTERS_START_NUM):
         shelters_list.append(Shelter())
 
+    global ENERGY_POINT
+    ENERGY_POINT = 1
+    # when config tests
+    if plancton_max_to_add:
+        global PLANCTON_MAX_TO_ADD
+        PLANCTON_MAX_TO_ADD = plancton_max_to_add
+
+    if plancton_timer:
+        global PLANCTON_TIMER
+        PLANCTON_TIMER = plancton_timer
+
 
 def simulation_step():
     global fish_list, fishsprite_list, eggs_list, plancton_list, shelters_list, plancton_add_counter, \
         plancton_random_range_radians, application, screen, background, aqLabel, \
-        time_unit_counter, fish_year_passed
+        time_unit_counter, fish_year_passed, fish_sum
 
     time_unit_counter += 1
 
@@ -156,13 +206,16 @@ def simulation_step():
     # generate additional plancton every PLANCTON_TIMER
     plancton_add_counter += 1
     plancton_add_counter, \
-    plancton_list, \
-    plancton_random_range_radians = generate_additional_plancton(plancton_add_counter, plancton_list,
-                                                                 plancton_random_range_radians)
+        plancton_list, \
+        plancton_random_range_radians = generate_additional_plancton(plancton_add_counter, plancton_list,
+                                                                     plancton_random_range_radians)
 
     remove_dead_fish_from_list()
-    for dead_fish in dead_fish_list:
-        dead_fish.draw_circles_and_age()
+    # dead fish are not printed !
+
+
+    # for dead_fish in dead_fish_list:
+    #     dead_fish.draw_circles_and_age()
 
     check_which_fish_in_shelter()
     # TODO
@@ -196,6 +249,7 @@ def simulation_step():
     if time_unit_counter >= FISH_YEAR:
         fish_year_passed += 1
         time_unit_counter = 0
+        fish_sum += len(fish_list)
 
     # update labels in Statistic
     aqLabel.update_plancton_fish_labels(fish_year_passed, len(plancton_list), male_counter, female_counter,
@@ -213,6 +267,14 @@ def simulation_step():
     application.paint()
 
     pygame.display.flip()
+
+    # to return for looping when finding optimal configuration
+    if not fish_list:
+        are_all_fish_dead = True
+    else:
+        are_all_fish_dead = False
+
+    return are_all_fish_dead, fish_year_passed, fish_sum
 
 
 def check_which_fish_in_shelter():
@@ -280,7 +342,9 @@ def check_if_bumped_into_plancton(fish):
 
 def set_fish_chasing_each_other():
     global plancton_list, fish_list
-    if len(plancton_list) <= HUNGER_PLANCTON_LIMIT:
+
+    hunger_plancton_limit = MIN_PLANCTON_NUM_PER_FISH_NOT_HUNGRY * len(fish_list)
+    if len(plancton_list) <= hunger_plancton_limit:
         for fish in fish_list:
             if fish.is_predator:
                 closest_fish = get_closest_appropriate_fish_in_sight(fish, fish_is_smaller_and_not_in_shelter)
@@ -380,4 +444,5 @@ def generate_additional_plancton(plancton_add_counter, plancton_list, plancton_r
     return plancton_add_counter, plancton_list, plancton_random_range_radians
 
 
-if __name__ == '__main__': main()
+if __name__ == '__main__':
+    run_simulation()
