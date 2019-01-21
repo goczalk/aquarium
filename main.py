@@ -75,6 +75,8 @@ time_unit_counter = 0
 fish_year_passed = 1
 disease_counter = 0
 
+fishRL = None
+
 
 def run_simulation():
     initialize()
@@ -134,7 +136,7 @@ def init_global_variables():
     disease_counter = 0
 
 
-def initialize(plancton_max_to_add=None, plancton_timer=None, energy_point=None, multiplier_for_food=None):
+def initialize(RL=False, plancton_max_to_add=None, plancton_timer=None, energy_point=None, multiplier_for_food=None):
     init_global_variables()
 
     pygame.init()
@@ -161,10 +163,16 @@ def initialize(plancton_max_to_add=None, plancton_timer=None, energy_point=None,
 
     global fish_list
     for _ in range(FISH_START_NUM):
+        # when config tests
         if energy_point:
             fish_list.append(Fish(energy_point, multiplier_for_food))
         else:
             fish_list.append(Fish())
+
+    if RL:
+        global fishRL
+        fishRL = Fish(rl=True)
+        fish_list.append(fishRL)
 
     global plancton_list
     for _ in range(PLANCTON_START_NUM):
@@ -174,8 +182,6 @@ def initialize(plancton_max_to_add=None, plancton_timer=None, energy_point=None,
     for _ in range(SHELTERS_START_NUM):
         shelters_list.append(Shelter())
 
-    global ENERGY_POINT
-    ENERGY_POINT = 1
     # when config tests
     if plancton_max_to_add:
         global PLANCTON_MAX_TO_ADD
@@ -442,6 +448,158 @@ def generate_additional_plancton(plancton_add_counter, plancton_list, plancton_r
         for _ in range(number_of_plancton_to_add):
             plancton_list.append(Plancton())
     return plancton_add_counter, plancton_list, plancton_random_range_radians
+
+
+""" Functions for RL """
+
+# HARDCODED VALUES FOR SMALL/BIG AND NEAR/FAR !
+BIG_PLANCTON = 4
+NEAR_PLANCTON = 80
+FAR_PLANCTON = 180
+
+def calculate_plancton_distances():
+    near_small, near_big, far_small, far_big = 0, 0, 0, 0
+
+    for plancton in plancton_list:
+        if plancton.radius == BIG_PLANCTON:
+            is_big = True
+        else:
+            is_big = False
+
+        distance = calculate_distance(fishRL, plancton)
+        if distance <= NEAR_PLANCTON:
+            if is_big:
+                near_big += 1
+            else:
+                near_small += 1
+        elif distance <= FAR_PLANCTON:
+            if is_big:
+                far_big += 1
+            else:
+                far_small += 1
+
+    new_numbers = []
+    for number in [near_small, near_big, far_small, far_big]:
+        if number >= 13:
+            number = 13
+        elif number >= 8:
+            number = 8
+        elif number >= 5:
+            number = 5
+        elif number >= 3:
+            number = 3
+        elif number >= 1:
+            number = 1
+
+        new_numbers.append(number)
+        continue
+
+    near_small, near_big, far_small, far_big = new_numbers
+    return near_small, near_big, far_small, far_big
+
+
+def round_to_five(x):
+    base = 5
+    if x == 1:
+        return x
+    return int(base * round(float(x)/base))
+
+
+def get_RL_fish_state():
+    """
+    energy and hp and rounded to five
+    distance to plancton is rounded to Fibonnaci numbers (except for 2; maximum 13)
+    :return: [enegry, hp, num of near small placton, near big, far small, far big]
+    """
+    near_small, near_big, far_small, far_big = calculate_plancton_distances()
+    return [round_to_five(fishRL.energy), round_to_five(fishRL.hp), near_small, near_big, far_small, far_big]
+
+
+# TODO
+# optimase
+
+def env_step(action):
+    """
+    Env step, chooses placton to chase (for RL fish), based on action (int).
+
+    0 - near and small
+    1 - near and big
+    2 - far and small
+    3 - far and big
+    else (ex. 4) - random
+
+    Function is not returned until fish finished chasing the point: RL algorithm would have gone crazy when changing
+    all the time target.
+    One env step = one fish cycle to hover over the point it chose.
+    """
+    choose_point_randomly = False
+    point_x, point_y = None, None
+
+    if action == 0:
+        is_big = False
+        is_near = True
+    elif action == 1:
+        is_big = True
+        is_near = True
+    elif action == 2:
+        is_big = False
+        is_near = False
+    elif action == 3:
+        is_big = True
+        is_near = False
+    else:
+        choose_point_randomly = True
+
+    if not choose_point_randomly:
+        found_plancton = find_matching_plancton(is_big, is_near)
+        if found_plancton is not None:
+            found_plancton.colour = 0x000000
+            point_x = found_plancton.x
+            point_y = found_plancton.y
+        else:
+            choose_point_randomly = True
+
+    if choose_point_randomly:
+        fishRL.choose_random_point_to_chase()
+    else:
+        fishRL.point_x = point_x
+        fishRL.point_y = point_y
+
+    while not fishRL.RL_finished_chasing:
+        simulation_step()
+    fishRL.RL_finished_chasing = False
+
+
+def find_matching_plancton(is_big, is_near):
+    found_plancton = None
+
+    for plancton in plancton_list:
+        if is_big:
+            if plancton.radius == BIG_PLANCTON:
+                if _plancton_if_near_enough(plancton, is_near):
+                    found_plancton = plancton
+                    break
+        else:
+            if plancton.radius != BIG_PLANCTON:
+                if _plancton_if_near_enough(plancton, is_near):
+                    found_plancton = plancton
+                    break
+
+    return found_plancton
+
+
+def _plancton_if_near_enough(plancton, is_near):
+    distance = calculate_distance(fishRL, plancton)
+    if is_near:
+        if distance <= NEAR_PLANCTON:
+           return True
+        else:
+            return False
+    else:
+        if distance <= FAR_PLANCTON:
+            return True
+        else:
+            return False
 
 
 if __name__ == '__main__':

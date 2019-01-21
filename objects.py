@@ -99,17 +99,21 @@ class Plancton:
     self.radius - radius of plancton
     self.rect - Rectangle object
     self.screen - screen to display on
-    self.xy - x, y position
+    self.x - x position
+    self.y - y position
     """
 
     def __init__(self):
         x = random.randrange(SCREEN_WIDTH)
         y = random.randrange(SCREEN_HEIGHT)
         self.radius = random.randrange(MIN_PL_RADIUS, MAX_PL_RADIUS + 1)
-        self.xy = (x, y)
-        self.rect = pygame.Rect(self.xy, (self.radius, self.radius))
+        self.x = x
+        self.y = y
+        self.rect = pygame.Rect((self.x, self.y), (self.radius, self.radius))
         self.screen = pygame.display.get_surface()
         self.freshness = 0
+
+        self.colour = 0x339966
 
     def is_fresh(self):
         """
@@ -119,7 +123,8 @@ class Plancton:
         return True if self.freshness < PLANCTON_FRESHNESS else False
 
     def draw(self):
-        pygame.draw.circle(self.screen, 0x339966, self.xy, self.radius)
+        # pygame.draw.circle(self.screen, 0x339966, (self.x, self.y), self.radius)
+        pygame.draw.circle(self.screen, self.colour, (self.x, self.y), self.radius)
 
 
 class Egg:
@@ -181,8 +186,12 @@ class Fish(pygame.sprite.Sprite):
     self.in_shelter - boolean if fish is in shelter
     self.is_ill - boolean if has disease
     self.is_predator - boolean if is predator
+    self.is_RL - boolean, True if is Reinforcement Learning fish
     self.moves_fast - boolean, true when fish is moving fast
+    self.point_x - x of point to chase
+    self.point_y - y of point to chase
     self.rect - Rectangle object
+    self.RL_finished_chasing - boolean to determine if RL fish is on chasing point
     self.size - radius of the circle
     self.screen - screen to display on
     self.velocity - int for velocity
@@ -202,8 +211,10 @@ class Fish(pygame.sprite.Sprite):
     self.slower_aging_counter - counter of energies in row for slower aging
     """
 
-    def __init__(self, energy_point=None, multiplier_for_food=None):
+    def __init__(self, rl=False, energy_point=None, multiplier_for_food=None):
         """
+        :param rl: for reinforcement learning fish, it has different params when initilised and
+            not randomly chosen point to chase
         :param energy_point: for configuration tests, changing global
         :param multiplier_for_food: for configuration tests, changing global
         """
@@ -213,10 +224,23 @@ class Fish(pygame.sprite.Sprite):
         self.FONT = pygame.font.SysFont("monospace", 15)
 
         # self.image, self.rect = load_png('ball.png')
-        self.randomize_gender()
-        self.randomize_size()
-        self.randomize_growing_up_speed()
-        self.randomize_predatory()
+
+        if rl:
+            self.is_RL = True
+            self.gender = "female"
+            self.colour = 0xFF6E4A
+            self.size = 9
+            self.growing_up_speed = 2
+            self.is_predator = False
+            self.RL_finished_chasing = False
+        else:
+            self.is_RL = False
+            self.randomize_gender()
+            self.set_colour()
+            self.randomize_size()
+            self.randomize_growing_up_speed()
+            self.randomize_predatory()
+
         xy = self._init_position()
 
         self.rect = pygame.Rect(xy, (self.size, self.size))
@@ -224,7 +248,6 @@ class Fish(pygame.sprite.Sprite):
         self.energy = MAX_ENERGY
         self.hp = MAX_HP
         self.age = 1
-        self.set_colour()
         self.is_ill = False
 
         self.in_shelter = False
@@ -402,7 +425,10 @@ class Fish(pygame.sprite.Sprite):
         Updates velocity, energy, health. Draws energy and health indicator.
         """
         if self.fish_on_chasing_point():
-            self.choose_random_point_to_chase()
+            if self.is_RL:
+                self.RL_finished_chasing = True
+            else:
+                self.choose_random_point_to_chase()
 
         self.change_angle_to_chase()
         self.calc_new_pos()
@@ -640,6 +666,9 @@ class Fish(pygame.sprite.Sprite):
 
     def catch_disease(self):
         self.is_ill = True
+
+
+""" GENERAL FUNCTIONS """
 
 
 def is_in_vision(fish, dist):
