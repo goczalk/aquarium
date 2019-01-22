@@ -112,7 +112,6 @@ class Plancton:
         self.rect = pygame.Rect((self.x, self.y), (self.radius, self.radius))
         self.screen = pygame.display.get_surface()
         self.freshness = 0
-
         self.colour = 0x339966
 
     def is_fresh(self):
@@ -123,7 +122,6 @@ class Plancton:
         return True if self.freshness < PLANCTON_FRESHNESS else False
 
     def draw(self):
-        # pygame.draw.circle(self.screen, 0x339966, (self.x, self.y), self.radius)
         pygame.draw.circle(self.screen, self.colour, (self.x, self.y), self.radius)
 
 

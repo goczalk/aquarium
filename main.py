@@ -199,7 +199,10 @@ def simulation_step():
 
     time_unit_counter += 1
 
-    check_is_disease_strikes()
+
+    # TODO
+    # DISEASES ARE TURNED OFF AS FOR RL TRANING AND TESTING IT IS TOO RANDOM TO GET ILL
+    # check_is_disease_strikes()
 
     screen.blit(background, (0, 0))
 
@@ -304,9 +307,11 @@ def check_if_fish_eats_other_fish(female_counter, fish, male_counter):
         fish_index = fish.rect.collidelist(fish_list)
         if fish_index != -1:
             if fish.size > fish_list[fish_index].size:
-                eaten_fish = fish_list.pop(fish_index)
                 # remove from list and add as much energy as big the fish was
+                eaten_fish = fish_list.pop(fish_index)
+                eaten_fish.hp = 0
                 fish.increase_energy(eaten_fish.size)
+
                 if eaten_fish.gender == "female":
                     female_counter -= 1
                 else:
@@ -314,6 +319,7 @@ def check_if_fish_eats_other_fish(female_counter, fish, male_counter):
 
                 if eaten_fish.is_ill:
                     fish.catch_disease()
+
     return female_counter, male_counter
 
 
@@ -504,20 +510,28 @@ def round_to_five(x):
         return x
     return int(base * round(float(x)/base))
 
+def calculate_reward():
+    x = fishRL.hp
+    y = fishRL.energy
+    reward = int((2 * x * x + y * y) - 2100)
+    return reward
 
 def get_RL_fish_state():
     """
     energy and hp and rounded to five
     distance to plancton is rounded to Fibonnaci numbers (except for 2; maximum 13)
-    :return: [enegry, hp, num of near small placton, near big, far small, far big]
+    :return: tuple: ([energy, hp, num of near small placton, near big, far small, far big],
+                    reward, fishRL.age, fish_year_passed)
     """
     near_small, near_big, far_small, far_big = calculate_plancton_distances()
-    return [round_to_five(fishRL.energy), round_to_five(fishRL.hp), near_small, near_big, far_small, far_big]
+
+    reward = calculate_reward()
+    return [round_to_five(fishRL.energy), round_to_five(fishRL.hp), near_small, near_big, far_small, far_big],\
+           reward, fishRL.age, fish_year_passed
 
 
 # TODO
-# optimase
-
+# optimise
 def env_step(action):
     """
     Env step, chooses placton to chase (for RL fish), based on action (int).
@@ -528,12 +542,11 @@ def env_step(action):
     3 - far and big
     else (ex. 4) - random
 
-    Function is not returned until fish finished chasing the point: RL algorithm would have gone crazy when changing
-    all the time target.
-    One env step = one fish cycle to hover over the point it chose.
+    One env step is one fish year. RL algorithm can change decision based on changing E and HP. Also, to compare results
+    we have to have consitent number of rewards gathered.
+    :return: True if RL fish is dead or False if it isn't. Dead fish means episode 'done'.
     """
     choose_point_randomly = False
-    point_x, point_y = None, None
 
     if action == 0:
         is_big = False
@@ -550,24 +563,24 @@ def env_step(action):
     else:
         choose_point_randomly = True
 
-    if not choose_point_randomly:
-        found_plancton = find_matching_plancton(is_big, is_near)
-        if found_plancton is not None:
-            found_plancton.colour = 0x000000
-            point_x = found_plancton.x
-            point_y = found_plancton.y
-        else:
-            choose_point_randomly = True
-
-    if choose_point_randomly:
+    found_plancton = find_matching_plancton(is_big, is_near)
+    if choose_point_randomly or found_plancton is None:
         fishRL.choose_random_point_to_chase()
     else:
-        fishRL.point_x = point_x
-        fishRL.point_y = point_y
+        # found_plancton.colour = 0x000000
+        fishRL.point_x = found_plancton.x
+        fishRL.point_y = found_plancton.y
 
-    while not fishRL.RL_finished_chasing:
+    # env_step returns every FISH_YEAR
+    is_fish_dead = False
+    for _ in range(FISH_YEAR):
+        if fishRL.hp <= 0:
+            is_fish_dead = True
+            return is_fish_dead
+
         simulation_step()
-    fishRL.RL_finished_chasing = False
+
+    return is_fish_dead
 
 
 def find_matching_plancton(is_big, is_near):

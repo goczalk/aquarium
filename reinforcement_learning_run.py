@@ -6,59 +6,54 @@ import numpy as np
 
 q_table = []
 
+
 def main():
     # global q_table
-    initialize(RL=True)
 
+
+    # TODO
+    # change action, implement RL
     action = 1
-    
-    done = False
-    while not done:
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                done = True
 
-        # simulation_step()
-        # print(get_RL_fish_state())
+    total_age, total_rewards, total_average_rewards_per_year = 0, 0, 0
+    episodes = 100
 
-        # actions are numbered:
+    # TODO
+    # delete
+    episodes = 2
+    for i in range(episodes):
+        print("Episode {0}".format(i))
 
-        print(get_RL_fish_state())
-        env_step(action)
+        initialize(RL=True)
 
+        done = False
+        rewards_in_episode = 0
 
-    # import time
-    # from speed import Speed
-    # TIME_STEP = 0.03
-    # MAX_ACCUMULATED_TIME = 1.0
-    #
-    # last_update = time.clock()
-    # accumulator = 0.0
-    # done = False
-    # while not done:
-    #
-    #     for event in pygame.event.get():
-    #         if event.type == QUIT:
-    #             done = True
-    #         #  elif e.type is KEYDOWN and e.key == K_ESCAPE:
-    #         #      done = True
-    #
-    #     since_last_update = time.clock() - last_update
-    #     last_update = time.clock()
-    #     accumulator += since_last_update * Speed.get_sim_speed()
-    #     accumulator = min(MAX_ACCUMULATED_TIME, accumulator)
-    #
-    #     while accumulator > TIME_STEP:
-    #
-    #         print(get_RL_fish_state())
-    #         env_step(action)
-    #
-    #         accumulator -= TIME_STEP
+        while not done:
+            done = env_step(action)
+
+            # tuple: ([energy, hp, num of near small placton, near big, far small, far big], reward, age)
+            state, reward, age, years_passed = get_RL_fish_state()
+            print(state, reward, age, years_passed)
+            rewards_in_episode += reward
+
+        # passed one year less because we are starting from "1"
+        years_passed -= 1
+
+        total_age += age
+        total_rewards += rewards_in_episode
+        total_average_rewards_per_year += (rewards_in_episode / years_passed)
+
+    print('Results after {0} episodes:'.format(episodes))
+    print('Average age per episode: {0}'.format(total_age / episodes))
+    print('Average total rewards per episode: {0}'.format(int(total_rewards / episodes)))
+    print('Average of total average rewards per year: {0}'.format(int(total_average_rewards_per_year / episodes)))
+
 
     # q_table = np.zeros([env.observation_space.n, env.action_space.n])
 
-
-
+    # python 3.6
+    #print(f'Results after {episodes} episodes:')
 
 
 
