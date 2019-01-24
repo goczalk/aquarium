@@ -513,7 +513,7 @@ def round_to_five(x):
 def calculate_reward():
     x = fishRL.hp
     y = fishRL.energy
-    reward = int((2 * x * x + y * y) - 2100)
+    reward = int((2 * x * x + y * y) - 3000)
     return reward
 
 def get_RL_fish_state():
@@ -534,6 +534,7 @@ def get_RL_fish_state():
 # optimise
 def env_step(action):
     """
+    :param action
     Env step, chooses placton to chase (for RL fish), based on action (int).
 
     0 - near and small
@@ -563,13 +564,16 @@ def env_step(action):
     else:
         choose_point_randomly = True
 
-    found_plancton = find_matching_plancton(is_big, is_near)
-    if choose_point_randomly or found_plancton is None:
+    if choose_point_randomly:
         fishRL.choose_random_point_to_chase()
     else:
-        # found_plancton.colour = 0x000000
-        fishRL.point_x = found_plancton.x
-        fishRL.point_y = found_plancton.y
+        found_plancton = find_matching_plancton(is_big, is_near)
+        if found_plancton is None:
+            fishRL.choose_random_point_to_chase()
+        else:
+            # found_plancton.colour = 0x000000
+            fishRL.point_x = found_plancton.x
+            fishRL.point_y = found_plancton.y
 
     # env_step returns every FISH_YEAR
     is_fish_dead = False

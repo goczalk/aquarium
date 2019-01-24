@@ -783,3 +783,26 @@ energy_point:0.0025
 multiplier_for_food:4
 Finished after: 230 steps
 Average fish num: 6308.2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=======================================================================
+Bez alogrytmu RL wyniki:
+Results after 100 episodes:
+Average age per episode: 50.51
+Average total rewards per episode: 506161
+Average of total average rewards per year: 12659
