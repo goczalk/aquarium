@@ -1,3 +1,4 @@
+import os
 import random
 import time
 
@@ -6,6 +7,11 @@ import pygame
 from pygame.locals import *
 
 from main import initialize, env_step, get_RL_fish_state
+
+# TODO
+# test without gui
+# test after appriopriate learning
+# 1k learning!
 
 
 ACTIONS_SPACE_LEN = 5
@@ -20,23 +26,62 @@ states = []
 # rows are rewards
 q_table = None
 
+
 def main():
-    start = time.time()
-    train_agent()
-    end = time.time()
-    elapsed_time = end - start
-    print("Training time: " + str(time.strftime("%H:%M:%S", time.gmtime(elapsed_time))))
+    global q_table, states
+    old_read_states_and_q_table('statuses_po_1000.txt', 'rewards_po_1000.txt')
+    print(states)
+    print(len(states))
+    print(q_table)
+    print(len(q_table))
+
+    for loop_counter in range(0, 1000):
+        print("Loop number {}".format(loop_counter))
+
+        start = time.time()
+
+        train_agent(loop_counter)
+
+        end = time.time()
+        elapsed_time = end - start
+        print("Training time: " + str(time.strftime("%H:%M:%S", time.gmtime(elapsed_time))))
+
+        start = time.time()
+
+        evaluate_agent(loop_counter)
+
+        end = time.time()
+        elapsed_time = end - start
+        print("Evaluating time: " + str(time.strftime("%H:%M:%S", time.gmtime(elapsed_time))))
 
 
-    start = time.time()
-    evaluate_agent()
-    end = time.time()
-    elapsed_time = end - start
-    print("Evaluating time: " + str(time.strftime("%H:%M:%S", time.gmtime(elapsed_time))))
+def TODO_STATE_TO_NUMPYARRAY_AND_NICE_WRITE():
+    global q_table, states
+    old_read_states_and_q_table('statuses.txt', 'rewards.txt')
+    print(states)
+    print(len(states))
+    # print(q_table)
+    # print(len(q_table))
 
 
-def train_agent():
+    # statenew = np.array([states])
+
+    # print(statenew)
+    # write_states_and_rewards_to_files("xxx")
+    #
+    # states = []
+    # print(states)
+    # open_states_and_rewards_from_files("xxx")
+    # print(states)
+
+
+def train_agent(loop_count):
+    if loop_count == 0:
+        return
+
     """Training the agent"""
+    # TODO
+    # used?
     global q_table, states
 
     # Hyperparameters
@@ -56,10 +101,14 @@ def train_agent():
     # so we'll be introducing another parameter called ϵ "epsilon" to cater to this during training.
     epsilon = 0.1
 
-    # TODO
-    # range?
-    for i in range(0, 100000):
-        print("Training episode {0}".format(i))
+    for i in range(1, 1001):
+        # because it was trained before
+
+        real_episode_count = i + loop_count * 1000
+
+        start = time.time()
+
+        print("Training episode {0}".format(real_episode_count))
         initialize(RL=True)
 
         done = False
@@ -81,18 +130,98 @@ def train_agent():
 
             state = next_state
 
-    with open('statuses.txt', 'w') as filehandle:
-        filehandle.writelines("%s\n" % state for state in states)
-    with open('rewards.txt', 'w') as filehandle:
-        filehandle.writelines("%s\n" % reward for reward in q_table)
+        if i % 50 == 0:
+            write_states_and_rewards_to_files(real_episode_count)
+            # old_write_statues_rewards_to_file(real_episode_count)
+
+        end = time.time()
+        elapsed_time = end - start
+        print("Episode training time: " + str(time.strftime("%H:%M:%S", time.gmtime(elapsed_time))))
 
     print("Training finished.\n")
-    print(np.array(states))
-    print()
-    print(q_table)
+    # print(np.array(states))
+    # print()
+    # print(q_table)
 
 
-def evaluate_agent():
+# TODO
+# NICER TO SAVE STATES! -> old way now used!
+def write_states_and_rewards_to_files(prefix):
+    global states, q_table
+    states_file_name = str(prefix) + "_states"
+    rewards_file_name = str(prefix) + "_rewards"
+
+    np.save(rewards_file_name, q_table)
+    np.savetxt(rewards_file_name + ".txt", q_table)
+
+    with open(states_file_name, 'w') as filehandle:
+        filehandle.writelines("%s\n" % state for state in states)
+
+
+# TODO
+# NICER TO SAVE/READ STATES! -> old way to save was used!
+def open_states_and_rewards_from_files(prefix):
+    global states, q_table
+    states_file_name = prefix + "_states"
+    rewards_file_name = prefix + "_rewards.npy"
+    q_table = np.load(rewards_file_name)
+
+
+def old_write_statues_rewards_to_file(prefix):
+    global states, q_table
+    states_file_name = prefix + "_states.txt"
+    rewards_file_name = prefix + "_rewards.txt"
+
+    # TODO
+    # change writing
+    with open(states_file_name, 'w') as filehandle:
+        filehandle.writelines("%s\n" % state for state in states)
+
+    # TODO
+    # change writing
+    with open(rewards_file_name, 'w') as filehandle:
+        filehandle.writelines("%s\n" % reward for reward in q_table)
+
+
+# q_table = np.fromfile(rewards_file_name, sep=' ')
+# q_table = np.loadtxt(rewards_file_name, dtype=np.ndarray)
+def old_read_states_and_q_table(states_file_name, rewards_file_name):
+    global q_table, states
+    with open(states_file_name, 'r') as file:
+        for line in file:
+            line = line.rstrip('\n')
+            items = line.split(',')
+            temp = []
+            for item in items:
+                value = int(item.strip(']').strip('['))
+                # results = list(map(int, results))
+                temp.append(value)
+            states.append(temp)
+
+    count = 0
+    lines_count = len(states)
+    with open(rewards_file_name, 'r') as file:
+        q_table = np.zeros([lines_count, ACTIONS_SPACE_LEN])
+
+        for line in file:
+            line = line.rstrip('\n')
+            if line[-1] != ']':
+                line += next(file)
+
+            items = line.split()
+            temp = []
+
+            # print(items)
+            for item in items:
+                item = item.replace("]", "").replace("[", "")
+                if item:
+                    value = float(item)
+                    temp.append(value)
+            q_table[count] = temp
+            count += 1
+
+
+def evaluate_agent(loop_count):
     """Evaluate agent's performance after Q-learning"""
     global states, q_table
 
@@ -128,10 +257,17 @@ def evaluate_agent():
         total_rewards += rewards_in_episode
         total_average_rewards_per_year += (rewards_in_episode / years_passed)
 
-    print('Results after {0} episodes:'.format(episodes))
-    print('Average age per episode: {0}'.format(total_age / episodes))
-    print('Average total rewards per episode: {0}'.format(int(total_rewards / episodes)))
-    print('Average of total average rewards per year: {0}'.format(int(total_average_rewards_per_year / episodes)))
+    with open("results", 'a') as text_file:
+        print('Results in {} loop'.format(loop_count), file=text_file)
+        print('Average age per episode: {}'.format(total_age / episodes), file=text_file)
+        print('Average total rewards per episode: {}'.format(int(total_rewards / episodes)), file=text_file)
+        print('Average of total average rewards per year: {}'.format(int(total_average_rewards_per_year / episodes)),
+              file=text_file)
+
+    print('Results in {} loop'.format(loop_count))
+    print('Average age per episode: {}'.format(total_age / episodes))
+    print('Average total rewards per episode: {}'.format(int(total_rewards / episodes)))
+    print('Average of total average rewards per year: {}'.format(int(total_average_rewards_per_year / episodes)))
 
     # python 3.6
     #print(f'Results after {episodes} episodes:')
@@ -172,7 +308,8 @@ def get_max_reward(state):
         pass
     return max_reward
 
-
+# TODO
+# optimilize: numpy array shouldn't be appended; initilized with good values
 def insert_to_lists(state, action, reward):
     global q_table, states
     try:
