@@ -8,11 +8,6 @@ from pygame.locals import *
 
 from main import initialize, env_step, get_RL_fish_state
 
-# TODO
-# test without gui
-# test after appriopriate learning
-# 1k learning!
-
 
 ACTIONS_SPACE_LEN = 5
 INIT_STATE = [-1, -1, -1, -1, -1]  # this will never happen as normal state
@@ -29,8 +24,7 @@ q_table = None
 
 def main():
     # set to True if you want to check what will be results for 'random fish', not RL-based
-    test_random = True
-    # test_random = False
+    test_random = False
 
     if not test_random:
         global q_table, states
@@ -73,7 +67,6 @@ def TODO_STATE_TO_NUMPYARRAY_AND_NICE_WRITE():
     print(len(states))
     # print(q_table)
     # print(len(q_table))
-
 
     # statenew = np.array([states])
 
@@ -154,9 +147,11 @@ def train_agent(loop_count):
     # print()
     # print(q_table)
 
+# TODO
+# are there old ways still needed?
 
 # TODO
-# NICER TO SAVE STATES! -> old way now used!
+# test it
 def write_states_and_rewards_to_files(prefix):
     global states, q_table
     states_file_name = str(prefix) + "_states"
@@ -165,19 +160,24 @@ def write_states_and_rewards_to_files(prefix):
     np.save(rewards_file_name, q_table)
     np.savetxt(rewards_file_name + ".txt", q_table)
 
-    with open(states_file_name, 'w') as filehandle:
-        filehandle.writelines("%s\n" % state for state in states)
+    states_temp = np.array(states)
+    np.save(states_file_name, states_temp)
+    np.savetxt(states_file_name + ".txt", states_temp)
 
 
 # TODO
-# NICER TO SAVE/READ STATES! -> old way to save was used!
+# test it
 def open_states_and_rewards_from_files(prefix):
     global states, q_table
-    states_file_name = prefix + "_states"
+    states_file_name = prefix + "_states.npy"
     rewards_file_name = prefix + "_rewards.npy"
+
     q_table = np.load(rewards_file_name)
+    states_temp = np.load(states_file_name)
+    states = states_temp.tolist()
 
 
+# prefix "old" means awful and should be deleted when proved that it wouldn't be used anymore
 def old_write_statues_rewards_to_file(prefix):
     global states, q_table
     states_file_name = prefix + "_states.txt"
