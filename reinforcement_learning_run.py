@@ -28,27 +28,38 @@ q_table = None
 
 
 def main():
-    global q_table, states
-    old_read_states_and_q_table('statuses_po_1000.txt', 'rewards_po_1000.txt')
-    print(states)
-    print(len(states))
-    print(q_table)
-    print(len(q_table))
+    # set to True if you want to check what will be results for 'random fish', not RL-based
+    test_random = True
+    # test_random = False
 
-    for loop_counter in range(0, 1000):
-        print("Loop number {}".format(loop_counter))
+    if not test_random:
+        global q_table, states
+        # change files depending on q_table you want to use
+        old_read_states_and_q_table('statuses_po_1000.txt', 'rewards_po_1000.txt')
+        print(states)
+        print(len(states))
+        print(q_table)
+        print(len(q_table))
+
+    loop_range = 1000
+    if test_random:
+        loop_range = 4
+    for loop_counter in range(0, loop_range):
+
+        if not test_random:
+            print("Loop number {}".format(loop_counter))
+
+            start = time.time()
+
+            train_agent(loop_counter)
+
+            end = time.time()
+            elapsed_time = end - start
+            print("Training time: " + str(time.strftime("%H:%M:%S", time.gmtime(elapsed_time))))
 
         start = time.time()
 
-        train_agent(loop_counter)
-
-        end = time.time()
-        elapsed_time = end - start
-        print("Training time: " + str(time.strftime("%H:%M:%S", time.gmtime(elapsed_time))))
-
-        start = time.time()
-
-        evaluate_agent(loop_counter)
+        evaluate_agent(loop_counter, test_random)
 
         end = time.time()
         elapsed_time = end - start
@@ -221,7 +232,7 @@ def old_read_states_and_q_table(states_file_name, rewards_file_name):
             count += 1
 
 
-def evaluate_agent(loop_count):
+def evaluate_agent(loop_count, test_random):
     """Evaluate agent's performance after Q-learning"""
     global states, q_table
 
@@ -242,7 +253,10 @@ def evaluate_agent(loop_count):
         done = False
         state = INIT_STATE
         while not done:
-            action = get_best_action(state)
+            if test_random:
+                action = ACTIONS_SPACE_LEN - 1
+            else:
+                action = get_best_action(state)
             done = env_step(action)
 
             # tuple: ([energy, hp, num of near small placton, near big, far small, far big], reward, age, years_passed)
@@ -258,12 +272,17 @@ def evaluate_agent(loop_count):
         total_average_rewards_per_year += (rewards_in_episode / years_passed)
 
     with open("results", 'a') as text_file:
+        if test_random:
+            print('Results for random fish', file=text_file)
+
         print('Results in {} loop'.format(loop_count), file=text_file)
         print('Average age per episode: {}'.format(total_age / episodes), file=text_file)
         print('Average total rewards per episode: {}'.format(int(total_rewards / episodes)), file=text_file)
         print('Average of total average rewards per year: {}'.format(int(total_average_rewards_per_year / episodes)),
               file=text_file)
 
+    if test_random:
+        print('Results for random fish')
     print('Results in {} loop'.format(loop_count))
     print('Average age per episode: {}'.format(total_age / episodes))
     print('Average total rewards per episode: {}'.format(int(total_rewards / episodes)))
