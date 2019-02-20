@@ -1,0 +1,25 @@
+FOR RANDOM:
+Results after 100 episodes:
+Average age per episode: 50.51
+Average total rewards per episode: 506161
+Average of total average rewards per year: 12659
+Results for random fish
+Results in 0 loop
+Average age per episode: 53.41
+Average total rewards per episode: 461660
+Average of total average rewards per year: 11565
+Results for random fish
+Results in 1 loop
+Average age per episode: 65.36
+Average total rewards per episode: 474125
+Average of total average rewards per year: 11210
+Results for random fish
+Results in 2 loop
+Average age per episode: 59.05
+Average total rewards per episode: 451333
+Average of total average rewards per year: 11703
+Results for random fish
+Results in 3 loop
+Average age per episode: 56.98
+Average total rewards per episode: 453540
+Average of total average rewards per year: 11103

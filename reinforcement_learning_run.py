@@ -39,6 +39,10 @@ def main():
     if test_random:
         loop_range = 4
     for loop_counter in range(0, loop_range):
+        # TODO
+        # change condition
+        if loop_counter < 20:
+            continue
 
         if not test_random:
             print("Loop number {}".format(loop_counter))
@@ -80,9 +84,6 @@ def TODO_STATE_TO_NUMPYARRAY_AND_NICE_WRITE():
 
 
 def train_agent(loop_count):
-    if loop_count == 0:
-        return
-
     """Training the agent"""
     # TODO
     # used?
@@ -339,12 +340,14 @@ def insert_to_lists(state, action, reward):
         if q_table is None:
             q_table = initialize_q_table(action, reward)
         else:
+            #temp = np.zeros(ACTIONS_SPACE_LEN)
             temp = np.zeros([1, ACTIONS_SPACE_LEN])
             temp[0, action] = reward
             q_table = np.append(q_table, temp, axis=0)
 
 
 def initialize_q_table(action, reward):
+    #table = np.zeros(ACTIONS_SPACE_LEN)
     table = np.zeros([1, ACTIONS_SPACE_LEN])
     table[0, action] = reward
     return table
