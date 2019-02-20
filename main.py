@@ -140,26 +140,26 @@ def initialize(RL=False, plancton_max_to_add=None, plancton_timer=None, energy_p
     init_global_variables()
 
     pygame.init()
-    # size = [SCREEN_WIDTH, SCREEN_HEIGHT]
-    # global screen
-    # screen = pygame.display.set_mode(size, SWSURFACE)
-    # pygame.display.set_caption('Aquarium')
+    size = [SCREEN_WIDTH, SCREEN_HEIGHT]
+    global screen
+    screen = pygame.display.set_mode(size, SWSURFACE)
+    pygame.display.set_caption('Aquarium')
     # Fill background
-    # global background
-    # background = pygame.Surface(screen.get_size())
-    # background = background.convert()
-    # background.fill((250, 250, 250))
+    global background
+    background = pygame.Surface(screen.get_size())
+    background = background.convert()
+    background.fill((250, 250, 250))
     # For labels and sliders
     global application
     application = gui.App()
-    # global aqLabel
-    # aqLabel = AquariumLabels()
+    global aqLabel
+    aqLabel = AquariumLabels()
     c = gui.Container(align=-1, valign=-1)
-    # c.add(aqLabel, 0, 0)
+    c.add(aqLabel, 0, 0)
     application.init(c)
     # Blit everything to the screen
-    # screen.blit(background, (0, 0))
-    # pygame.display.flip()
+    screen.blit(background, (0, 0))
+    pygame.display.flip()
 
     global fish_list
     for _ in range(FISH_START_NUM):
@@ -204,7 +204,7 @@ def simulation_step():
     # DISEASES ARE TURNED OFF AS FOR RL TRANING AND TESTING IT IS TOO RANDOM TO GET ILL
     # check_is_disease_strikes()
 
-    # screen.blit(background, (0, 0))
+    screen.blit(background, (0, 0))
 
     # male, female, ill counters
     male_counter = 0
@@ -261,21 +261,21 @@ def simulation_step():
         fish_sum += len(fish_list)
 
     # update labels in Statistic
-    # aqLabel.update_plancton_fish_labels(fish_year_passed, len(plancton_list), male_counter, female_counter,
-    #                                     predators_counter, ill_fish_counter)
+    aqLabel.update_plancton_fish_labels(fish_year_passed, len(plancton_list), male_counter, female_counter,
+                                        predators_counter, ill_fish_counter)
 
     eggs_list = check_freshness_and_draw(eggs_list)
     plancton_list = check_freshness_and_draw(plancton_list)
 
     # TODO
     # shorter for loop?
-    # for shelter in shelters_list:
-    #     shelter.draw()
+    for shelter in shelters_list:
+        shelter.draw()
 
     # For labels and sliders
-    # application.paint()
+    application.paint()
 
-    # pygame.display.flip()
+    pygame.display.flip()
 
     # to return for looping when finding optimal configuration
     if not fish_list:
@@ -428,8 +428,8 @@ def check_freshness_and_draw(item_list):
     for item in item_list:
         if not item.is_fresh():
             item_list.remove(item)
-    # for item in item_list:
-        # item.draw()
+    for item in item_list:
+        item.draw()
     return item_list
 
 

@@ -29,11 +29,11 @@ def main():
     if not test_random:
         global q_table, states
         # change files depending on q_table you want to use
-        old_read_states_and_q_table('statuses_po_1000.txt', 'rewards_po_1000.txt')
-        print(states)
-        print(len(states))
-        print(q_table)
-        print(len(q_table))
+        # old_read_states_and_q_table('statuses_po_1000.txt', 'rewards_po_1000.txt')
+        # print(states)
+        # print(len(states))
+        # print(q_table)
+        # print(len(q_table))
 
     loop_range = 1000
     if test_random:

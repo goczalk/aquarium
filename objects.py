@@ -407,9 +407,9 @@ class Fish(pygame.sprite.Sprite):
         # check if dead
         if self.hp > 0:
             self.update()
-            # self.draw_energy_indicators()
-            # self.draw_hp_indicators()
-        # self.draw_circles_and_age()
+            self.draw_energy_indicators()
+            self.draw_hp_indicators()
+        self.draw_circles_and_age()
 
     def draw_circles_and_age(self):
         pygame.draw.circle(self.screen, self.get_colour(), (self.rect.x, self.rect.y), self.size)
@@ -545,7 +545,7 @@ class Fish(pygame.sprite.Sprite):
                     if q == 0:
                         self.energy -= ENERGY_REPRODUCTION_COST
                         self.reproduction_counter = 0
-                        # self.draw_energy_indicators()
+                        self.draw_energy_indicators()
                         return Egg(self.rect.x, self.rect.y)
 
     def fertilize_eggs(self):
@@ -561,7 +561,7 @@ class Fish(pygame.sprite.Sprite):
                     if q == 0:
                         self.energy -= ENERGY_REPRODUCTION_COST
                         self.reproduction_counter = 0
-                        # self.draw_energy_indicators()
+                        self.draw_energy_indicators()
                         return True
         return False
 
